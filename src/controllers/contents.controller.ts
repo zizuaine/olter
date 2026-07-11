@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import axios from "axios";
 import { contentModel } from "../models/contents.js";
 import { parseWebsites } from "../extractors/websites.js";
+import { parseYoutube } from "../extractors/youtube.js";
 
 export const detectType = (link: string): "link" | "pdf" | "youtube" => {
     if (link.includes("youtube.com/watch") || link.includes("youtu.be")) {
@@ -39,13 +40,12 @@ export const addContents = async (req: Request, res: Response) => {
         let extracted;
 
         if (type === "youtube") {
-
+            extracted = await parseYoutube(link);
         } else {
             const { data: html } = await axios.get(link, {
                 headers: { "User-Agent": "Mozila/5.0" },
                 timeout: 10000
             });
-
             extracted = await parseWebsites(html, link);
         }
 

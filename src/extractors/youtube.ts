@@ -3,37 +3,43 @@ import axios from "axios";
 import { YoutubeTranscript } from "youtube-transcript";
 import type { ExtractedContent } from "./websites.js";
 
-const getVideoID = (link: string): string => {
+export const parseYoutube = async (link: string): Promise<ExtractedContent> => {
     const url = new URL(link);
-    if (url.hostname === "youtube") {
-        const id = url.searchParams.get("v");
+    const hostname = url.hostname.replace(/^www\./, "");
+
+    let id: string;
+    if (hostname === "youtube.com") {
+        id = url.searchParams.get("v") ?? " ";
         if (!id) {
             throw new Error("ID not found")
         }
-        return id;
-    } else if (url.hostname === "youtu.be") {
-        const id = url.pathname.slice(1);
+    } else if (hostname === "youtu.be") {
+        id = url.pathname.slice(1);
         if (!id) {
             throw new Error("ID not found");
         }
-        return id;
+    } else {
+        throw new Error("Invalid YouTube URL");
     }
-    throw new Error("Invalid YouTube URL");
+    return await extract(id, link)
+
 }
 
-export const parseYoutube = async (id: string): Promise<ExtractedContent> => {
+const extract = async (id: string, link: string): Promise<ExtractedContent> => {
     const oembedRes = await axios.get(
-        `https://www.youtube.com/oembed?url=${url}&format=json`
+        `https://www.youtube.com/oembed?url=${link}&format=json`
     );
     const title = oembedRes.data.title;
 
     const transcript_obj = await YoutubeTranscript.fetchTranscript(id);
     const transcript = transcript_obj.map(obj => obj.text).join(" ");
     if (!transcript) {
-        return "";
+        throw new Error("Transcript unavailable.");
     }
     return {
-        title:
-            content: transcript;
+        title: title,
+        content: transcript,
+        sitename: "Youtube",
+        excerpt: transcript.slice(0, 100)
     };
 }

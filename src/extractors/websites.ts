@@ -1,7 +1,7 @@
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 
-interface ExtractedContent {
+export interface ExtractedContent {
     title: string,
     content: string,
     excerpt: string,
