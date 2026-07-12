@@ -37,8 +37,8 @@ export const addContents = async (req: Request, res: Response) => {
         }
 
         const type = detectType(link);
-        let extracted;
 
+        let extracted;
         if (type === "youtube") {
             extracted = await parseYoutube(link);
         } else {

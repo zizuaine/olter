@@ -1,7 +1,7 @@
 import { URL } from "node:url";
 import axios from "axios";
 import { YoutubeTranscript } from "youtube-transcript";
-import type { ExtractedContent } from "./websites.js";
+import type { ExtractedContent } from "../types/extracted-content.js";
 
 export const parseYoutube = async (link: string): Promise<ExtractedContent> => {
     const url = new URL(link);

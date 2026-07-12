@@ -1,12 +1,6 @@
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
-
-export interface ExtractedContent {
-    title: string,
-    content: string,
-    excerpt: string,
-    sitename: string
-}
+import type { ExtractedContent } from "../types/extracted-content.js";
 
 export const parseWebsites = async (html: string, link: string): Promise<ExtractedContent> => {
     const doc = new JSDOM(html, { url: link });
