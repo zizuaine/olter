@@ -3,12 +3,16 @@ import axios from "axios";
 import { contentModel } from "../models/contents.js";
 import { parseWebsites } from "../extractors/websites.js";
 import { parseYoutube } from "../extractors/youtube.js";
+import { parsePDF } from "../extractors/pdf.js";
 
 export const detectType = (link: string): "link" | "pdf" | "youtube" => {
     if (link.includes("youtube.com/watch") || link.includes("youtu.be")) {
         return "youtube";
     };
-    if (link.endsWith(".pdf")) {
+    if (
+        link.endsWith(".pdf") ||
+        link.includes("/pdf/")
+    ) {
         return "pdf";
     }
     return "link";
@@ -41,6 +45,8 @@ export const addContents = async (req: Request, res: Response) => {
         let extracted;
         if (type === "youtube") {
             extracted = await parseYoutube(link);
+        } else if (type === "pdf") {
+            extracted = await parsePDF(link);
         } else {
             const { data: html } = await axios.get(link, {
                 headers: { "User-Agent": "Mozila/5.0" },
@@ -59,12 +65,14 @@ export const addContents = async (req: Request, res: Response) => {
             summary: extracted.excerpt,
             sitename: extracted.sitename
         });
+
         res.status(200).json({
             message: "content successfully added",
             content
         });
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             message: "content could not be added"
         })

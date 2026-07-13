@@ -40,6 +40,6 @@ const extract = async (id: string, link: string): Promise<ExtractedContent> => {
         title: title,
         content: transcript,
         sitename: "Youtube",
-        excerpt: transcript.slice(0, 100)
+        excerpt: transcript.slice(0, 200)
     };
 }
