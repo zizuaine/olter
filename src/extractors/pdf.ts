@@ -15,7 +15,7 @@ export const parsePDF = async (link: string): Promise<ExtractedContent> => {
         .replace(/\r?\n/g, " ")
         .replace(/\s+/g, " ")
         .trim()
-        .slice(0, 1200)
+        .slice(0, 1500)
 
     return {
         title: "PDF Document",

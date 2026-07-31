@@ -16,7 +16,7 @@ export const parseWebsites = async (html: string, link: string): Promise<Extract
         content: article?.textContent
             ?.replace(/\s+/g, " ")
             .trim()
-            .slice(0, 8000) ?? "",
+            .slice(0, 10000) ?? "",
         excerpt: article?.excerpt ?? "",
         sitename: article?.siteName ?? ""
     }
