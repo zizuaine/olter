@@ -1,8 +1,13 @@
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 import type { ExtractedContent } from "../types/extracted-content.js";
+import axios from "axios";
 
-export const parseWebsites = async (html: string, link: string): Promise<ExtractedContent> => {
+export const parseWebsites = async (link: string): Promise<ExtractedContent> => {
+    const { data: html } = await axios.get(link, {
+        headers: { "User-Agent": "Mozila/5.0" },
+        timeout: 10000
+    });
     const doc = new JSDOM(html, { url: link });
     const reader = new Readability(doc.window.document);
     const article = reader.parse();
@@ -15,8 +20,7 @@ export const parseWebsites = async (html: string, link: string): Promise<Extract
         title: article?.title ?? "",
         content: article?.textContent
             ?.replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 10000) ?? "",
+            .trim() ?? "",
         excerpt: article?.excerpt ?? "",
         sitename: article?.siteName ?? ""
     }
