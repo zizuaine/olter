@@ -26,10 +26,10 @@ export const parseYoutube = async (link: string): Promise<ExtractedContent> => {
 }
 
 const extract = async (id: string, link: string): Promise<ExtractedContent> => {
-    const oembedRes = await axios.get(
+    const response = await axios.get(
         `https://www.youtube.com/oembed?url=${link}&format=json`
     );
-    const title = oembedRes.data.title;
+    const title = response.data.title;
 
     const transcript_obj = await YoutubeTranscript.fetchTranscript(id);
     const transcript = transcript_obj.map(obj => obj.text).join(" ");

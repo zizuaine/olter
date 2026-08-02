@@ -4,7 +4,7 @@ dotenv.config();
 
 
 if (!process.env.GEMINI_API_KEY) {
-    throw new Error("api key not provided")
+    throw new Error("genAI api key not provided")
 }
 
 export const ai = new GoogleGenAI({

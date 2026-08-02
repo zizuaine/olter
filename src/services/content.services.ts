@@ -3,6 +3,8 @@ import { parseWebsites } from "../extractors/websites.js";
 import { parseYoutube } from "../extractors/youtube.js";
 import { parsePDF } from "../extractors/pdf.js";
 import type { ExtractedContent } from "../types/extracted-content.js";
+import { chunker } from "../utils/chunking.js";
+import { generateEmbeddings } from "../utils/embeddings.js";
 
 
 const detectType = (link: string): "link" | "pdf" | "youtube" => {
@@ -32,6 +34,8 @@ export const processContent = async (
             userId: user,
             content: note
         });
+        const chunks = chunker(note);
+
         return noteContent;
     }
 
@@ -50,6 +54,13 @@ export const processContent = async (
 
         extracted = await parseWebsites(link);
     }
+
+    const chunks = chunker(extracted.content);
+    if (!chunks) {
+        throw new Error("chunks not received")
+    }
+
+    const generatedEmbed = await generateEmbeddings(chunks)
 
     const content = await contentModel.create({
         link,
