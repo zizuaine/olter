@@ -37,9 +37,7 @@ const extract = async (id: string, link: string): Promise<ExtractedContent> => {
         throw new Error("Transcript unavailable.");
     }
     return {
-        title: title,
         content: transcript,
         sitename: "Youtube",
-        excerpt: transcript.slice(0, 200)
     };
 }

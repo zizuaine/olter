@@ -17,9 +17,7 @@ export const parsePDF = async (link: string): Promise<ExtractedContent> => {
         .trim()
 
     return {
-        title: "PDF Document",
         content: cleanedContent,
-        excerpt: cleanedContent.slice(0, 200),
         sitename: "PDF",
     }
 

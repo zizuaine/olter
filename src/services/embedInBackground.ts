@@ -8,6 +8,11 @@ export const embedInBackground = async (
     userId: string,
     type: string
 ): Promise<void> => {
+
+    if (!content.trim()) {
+        throw new Error("No content extracted.");
+    }
+
     await contentModel.findByIdAndUpdate(
         mongoId,
         { embeddingStatus: "Processing" }

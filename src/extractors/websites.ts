@@ -17,11 +17,9 @@ export const parseWebsites = async (link: string): Promise<ExtractedContent> => 
     }
 
     const extracted = {
-        title: article?.title ?? "",
         content: article?.textContent
             ?.replace(/\s+/g, " ")
             .trim() ?? "",
-        excerpt: article?.excerpt ?? "",
         sitename: article?.siteName ?? ""
     }
     return extracted;

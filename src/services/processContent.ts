@@ -4,6 +4,7 @@ import { parseYoutube } from "../extractors/youtube.js";
 import { parsePDF } from "../extractors/pdf.js";
 import type { ExtractedContent } from "../types/extracted-content.js";
 import { embedInBackground } from "./embedInBackground.js";
+import { generateMetadata } from "../llm/metadata.js";
 
 
 const detectType = (link: string): "link" | "pdf" | "youtube" => {
@@ -59,15 +60,19 @@ export const processContent = async (
 
         extracted = await parseWebsites(link);
     }
+
+    const metadata = await generateMetadata(extracted.content)
+
     try {
         const content = await contentModel.create({
             link,
-            title: extracted.title,
+            title: metadata.title,
             type: type,
             userId: user,
             tags: [],
+            topics: metadata.topics,
             content: extracted.content,
-            summary: extracted.excerpt,
+            summary: metadata.summary,
             sitename: extracted.sitename,
             embeddingStatus: "pending"
         });

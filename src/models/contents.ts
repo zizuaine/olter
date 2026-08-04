@@ -5,7 +5,8 @@ const contentsSchema = new Schema(
     {
         type: {
             type: String,
-            required: true
+            required: true,
+            enum: ["note", "link", "pdf", "youtube"],
         },
         title: {
             type: String,
@@ -17,8 +18,10 @@ const contentsSchema = new Schema(
             required: true
         },
         tags: [{
-            type: mongoose.Types.ObjectId,
-            ref: "Tag"
+            type: String,
+        }],
+        topics: [{
+            type: String,
         }],
         userId: {
             type: mongoose.Types.ObjectId,
