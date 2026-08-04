@@ -34,6 +34,11 @@ const contentsSchema = new Schema(
         sitename: {
             type: String,
             trim: true
+        },
+        embeddingStatus: {
+            type: String,
+            enum: ["pending", "processing", "completed", "failed"],
+            default: "pending"
         }
 
     }

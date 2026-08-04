@@ -1,6 +1,7 @@
 import { ai } from "../config/genai.js";
 
 export const generateEmbeddings = async (chunk: string): Promise<number[]> => {
+    console.log("Generating embedding");
     const response = await ai.models.embedContent({
         model: "gemini-embedding-2",
         contents: chunk,

@@ -51,7 +51,8 @@ export const chunker = (
             }
             const previousChunk = chunksList[i - 1];
             const overlapContent = previousChunk?.slice(-overlap);
-            return overlapContent + " " + chunk;
+            const finalChunk = overlapContent + " " + chunk;
+            return finalChunk;
         });
     }
 
