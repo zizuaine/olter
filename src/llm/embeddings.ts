@@ -6,6 +6,7 @@ export const generateEmbeddings = async (chunk: string): Promise<number[]> => {
         model: "gemini-embedding-2",
         contents: chunk,
     });
+    console.log("Embedding received");
     if (!response.embeddings) {
         throw new Error("No embeddings returned.");
     }

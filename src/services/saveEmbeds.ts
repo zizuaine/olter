@@ -1,4 +1,4 @@
-import { generateEmbeddings } from "../utils/embeddings.js";
+import { generateEmbeddings } from "../llm/embeddings.js";
 import { pineconeIndex } from "../config/pinecone.js";
 
 const sleep = (ms: number) => {
