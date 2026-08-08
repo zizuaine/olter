@@ -1,10 +1,17 @@
 import { pineconeIndex } from "../config/pinecone.js";
 import { generateEmbeddings } from "../llm/embeddings.js";
-import { ai } from "../config/genai.js";
 import { contentModel } from "../models/contents.js";
+import { chatModel } from "../models/chat.js";
+import { genResponse } from "../llm/genResponse.js";
 
-export const semanticSearch = async (query: string, user: string) => {
+export type ChatMessage = {
+    role: "user" | "assistant";
+    content: string;
+}
+
+export const semanticSearch = async (query: string, user: string, chat: ChatMessage[]) => {
     const queryEmbedding = await generateEmbeddings(query);
+
 
     const result = await pineconeIndex.query({
         vector: queryEmbedding,
@@ -15,7 +22,7 @@ export const semanticSearch = async (query: string, user: string) => {
 
     if (result.matches.length === 0) {
         return {
-            answer: "I could'nt find anythin relevant",
+            answer: "I could'nt find anything relevant",
             sources: []
         }
     }
@@ -23,23 +30,7 @@ export const semanticSearch = async (query: string, user: string) => {
     const context = result.matches.map(match => match.metadata?.text)
         .filter((text): text is string => typeof text === "string").join("\n\n");
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: `
-      You are answering questions using only the provided context.
-
-        Rules:
-        - Use only the context.
-        - If the answer is not present, say "I couldn't find that in your saved content."
-        - Respond in plain text.
-        - Do not use Markdown.
-        - Keep the answer concise.
-
-        Context:${context}
-
-        Question:${query}
-        `
-    });
+    const { answer } = await genResponse(query, context, chat)
 
     const mongoIds = result.matches.map(match => match.metadata?.mongoId)
         .filter((mongoId): mongoId is string => typeof mongoId === "string");
@@ -50,5 +41,5 @@ export const semanticSearch = async (query: string, user: string) => {
         _id: { $in: uniqueIds }
     });
 
-    return { answer: response.text, sources };
+    return { answer, sources };
 }
