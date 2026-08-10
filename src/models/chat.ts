@@ -28,6 +28,12 @@ const chatSchema = new Schema({
     },
 
     messages: [messageSchema],
+
+    quizId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Quiz",
+        default: null
+    }
 }, {
     timestamps: true,
 });
