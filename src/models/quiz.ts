@@ -22,4 +22,4 @@ const quizSchema = new Schema(
     { timestamps: true }
 );
 
-export const quizModel = model("Quiz", quizSchema);
+export const quizModel = model("Quiz", quizSchema); 

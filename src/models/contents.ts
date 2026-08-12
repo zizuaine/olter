@@ -46,8 +46,6 @@ const contentsSchema = new Schema(
 
     }
 )
-export type Content = InferSchemaType<typeof contentsSchema> & {
-    _id: mongoose.Types.ObjectId;
-};;
+export type Content = InferSchemaType<typeof contentsSchema>
 
 export const contentModel = model<Content>("Content", contentsSchema)

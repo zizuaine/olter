@@ -1,5 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
-import type { InferSchemaType } from "mongoose";
+import type { HydratedDocument, InferSchemaType } from "mongoose";
 import { string } from "zod";
 import { required } from "zod/mini";
 
@@ -33,10 +33,15 @@ const chatSchema = new Schema({
         type: mongoose.Types.ObjectId,
         ref: "Quiz",
         default: null
+    },
+
+    lastContentId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Content",
     }
 }, {
     timestamps: true,
 });
-export type Chat = InferSchemaType<typeof chatSchema>;
+export type Chat = InferSchemaType<typeof chatSchema>
 
 export const chatModel = model<Chat>("chat", chatSchema)

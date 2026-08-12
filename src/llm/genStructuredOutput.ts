@@ -20,5 +20,5 @@ export const genStructuredOutput = async <T>(operationConfig: OperationConfig, c
         throw new Error("No response generated");
     }
 
-    return JSON.parse(text) as T;;
+    return JSON.parse(text) as T;
 }
