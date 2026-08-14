@@ -35,10 +35,10 @@ const chatSchema = new Schema({
         default: null
     },
 
-    lastContentId: {
+    activeContentIds: [{
         type: mongoose.Types.ObjectId,
         ref: "Content",
-    }
+    }]
 }, {
     timestamps: true,
 });

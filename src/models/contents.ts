@@ -42,8 +42,8 @@ const contentsSchema = new Schema(
             type: String,
             enum: ["pending", "processing", "completed", "failed"],
             default: "pending"
-        }
-
+        },
+        brainId: {}
     }
 )
 export type Content = InferSchemaType<typeof contentsSchema>

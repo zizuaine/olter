@@ -1,5 +1,8 @@
 import { ai } from "../config/genai.js";
-import type { ChatMessage } from "../services/semanticSearch.js";
+type ChatMessage = {
+    role: "user" | "assistant",
+    content: string
+}
 
 export const genResponse = async (query: string, context: string, chat: ChatMessage[]) => {
 

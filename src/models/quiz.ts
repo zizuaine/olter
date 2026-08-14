@@ -15,7 +15,7 @@ const answerSchema = new Schema({
 const quizSchema = new Schema(
     {
         userId: { type: mongoose.Types.ObjectId, required: true },
-        contentId: { type: mongoose.Types.ObjectId, required: true },
+        contentIds: [{ type: mongoose.Types.ObjectId, ref: "Content", required: true }],
         questions: { type: [questionSchema], required: true },
         answers: { type: [answerSchema], required: true }
     },

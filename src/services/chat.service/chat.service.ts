@@ -1,7 +1,8 @@
 import { chatModel } from "../../models/chat.js";
-import { handleActionResponse } from "./action.service.js";
+import { handleQuery } from "./handleQuery.js";
 import { handleQuizResponse } from "./quiz.service.js";
-import { handleRagResponse } from "./rag.service.js";
+import { handleRagResponse } from "./handleRagResponse.js";
+import { executeOperation } from "../handleQuery.ts/executeOperation.js";
 
 export const sendQueryService = async (query: string, chatId: string, user: string) => {
     //check if existing chat exists
@@ -30,7 +31,7 @@ export const sendQueryService = async (query: string, chatId: string, user: stri
         await chat.save();
 
 
-        //check if exisitng chat has an active quiz
+        //check if exisitng chat has an active quiz for answering it
         const quizResponse = await handleQuizResponse(query, chat);
         if (quizResponse) {
             return {
@@ -40,15 +41,19 @@ export const sendQueryService = async (query: string, chatId: string, user: stri
         }
     }
 
-    const actionResponse = await handleActionResponse(query, user, chat);
-    if (actionResponse) {
-        return {
-            status: 200,
-            body: actionResponse
-        };
+    const { intent, resolvedContent } = await handleQuery(query, user, chat);
+    if (!resolvedContent) {
+        throw new Error("no content returned by contentResolver")
     }
 
-    const ragResponse = await handleRagResponse(query, user, chat);
+    const ragResponse = await executeOperation(
+        intent,
+        query,
+        resolvedContent.context,
+        resolvedContent.contentIds,
+        chat,
+        user
+    );
 
     return {
         status: 200,
@@ -57,6 +62,7 @@ export const sendQueryService = async (query: string, chatId: string, user: stri
 }
 
 export const getExistingChatService = async (chatId: string, user: string) => {
+
     const chat = await chatModel.findOne({
         _id: chatId,
         userId: user

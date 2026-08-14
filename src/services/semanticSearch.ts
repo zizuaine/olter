@@ -1,15 +1,8 @@
 import { pineconeIndex } from "../config/pinecone.js";
 import { generateEmbeddings } from "../llm/embeddings.js";
 import { contentModel } from "../models/contents.js";
-import { chatModel } from "../models/chat.js";
-import { genResponse } from "../llm/genResponse.js";
 
-export type ChatMessage = {
-    role: "user" | "assistant";
-    content: string;
-}
-
-export const semanticSearch = async (query: string, user: string, chat: ChatMessage[]) => {
+export const semanticSearch = async (query: string, user: string) => {
     const queryEmbedding = await generateEmbeddings(query);
 
 
@@ -22,15 +15,13 @@ export const semanticSearch = async (query: string, user: string, chat: ChatMess
 
     if (result.matches.length === 0) {
         return {
-            answer: "I could'nt find anything relevant",
+            context: "",
             sources: []
         }
     }
 
     const context = result.matches.map(match => match.metadata?.text)
         .filter((text): text is string => typeof text === "string").join("\n\n");
-
-    const { answer } = await genResponse(query, context, chat)
 
     const mongoIds = result.matches.map(match => match.metadata?.mongoId)
         .filter((mongoId): mongoId is string => typeof mongoId === "string");
@@ -41,5 +32,5 @@ export const semanticSearch = async (query: string, user: string, chat: ChatMess
         _id: { $in: uniqueIds }
     });
 
-    return { answer, sources };
+    return { context, sources, matches: result.matches };
 }

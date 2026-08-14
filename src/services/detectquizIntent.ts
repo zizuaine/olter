@@ -19,5 +19,5 @@ export const detectQuizIntent = async (
         query
     );
 
-    return result.text;
+    return result;
 };

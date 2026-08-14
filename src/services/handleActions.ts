@@ -8,6 +8,8 @@ import { genStructuredOutput } from "../llm/genStructuredOutput.js";
 import { quizModel } from "../models/quiz.js";
 import type { Content } from "../models/contents.js";
 import { chatModel } from "../models/chat.js";
+
+
 type QuizResult = {
     questions: {
         questionNumber: number;
@@ -38,9 +40,15 @@ type OperationMap = {
 
 type Operation = "flashcard" | "quiz" | "summary";
 
-export const aiActions = async (operation: Operation, content: Content, user: string, chatId: string) => {
+export const handleActionResponse = async (
+    operation: Operation,
+    content: string,
+    contentIds: string[],
+    user: string,
+    chatId: string
+) => {
 
-    if (!content.content) {
+    if (!content) {
         throw new Error("Content text is missing");
     }
 
@@ -63,7 +71,7 @@ export const aiActions = async (operation: Operation, content: Content, user: st
     const operationConfig = operations[operation];
     const result = await genStructuredOutput<OperationMap[typeof operation]>(
         operationConfig,
-        content.content
+        content
     );
 
     if (!result) {
@@ -74,7 +82,7 @@ export const aiActions = async (operation: Operation, content: Content, user: st
         const quizResult = result as QuizResult;
         const quiz = await quizModel.create({
             userId: user,
-            contentId: content._id,
+            contentIds,
             questions: quizResult.questions,
             answers: quizResult.answers,
         });

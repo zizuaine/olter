@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { contentModel } from "../models/contents.js";
-import { aiActions } from "../services/aiActions.js"
+import { aiActions } from "../services/handleActions.js"
 
 export const aiController = async (req: Request, res: Response) => {
     const { operation, contentId, chatId } = req.body;
