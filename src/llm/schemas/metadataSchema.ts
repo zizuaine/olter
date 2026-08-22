@@ -1,21 +1,17 @@
-import { Type, type Schema } from "@google/genai";
-
-export const metadataSchema: Schema = {
-    type: Type.OBJECT,
+export const metadataSchema: Record<string, unknown> = {
+    type: "object",
     properties: {
-        title: { type: Type.STRING },
-        summary: { type: Type.STRING },
+        title: { type: "string" },
+        summary: { type: "string" },
         tags: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            minItems: "3",
-            maxItems: "3",
+            type: "array",
+            items: { type: "string" }
         },
         topics: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            minItems: "2",
-            maxItems: "2",
-        },
+            type: "array",
+            items: { type: "string" }
+        }
     },
+    required: ["title", "summary", "tags", "topics"],
+    additionalProperties: false
 };

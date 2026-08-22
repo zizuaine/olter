@@ -1,4 +1,5 @@
-import { ai } from "../config/genai.js";
+import { groq } from "../config/groq.js";
+
 type ChatMessage = {
     role: "user" | "assistant",
     content: string
@@ -8,9 +9,8 @@ export const genResponse = async (query: string, context: string, chat: ChatMess
 
     const history = chat.map(message => ({
         role: message.role,
-        parts: [{ text: message.content }]
-    }))
-    console.log(history)
+        content: message.content
+    }));
 
     const systemPrompt = `You are a personal knowledge assistant for a Second Brain app.
 
@@ -27,19 +27,14 @@ export const genResponse = async (query: string, context: string, chat: ChatMess
     Context from user's saved content:
     ${context}`;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: [
+    const response = await groq.chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        messages: [
+            { role: "system", content: systemPrompt },
             ...history,
-            {
-                role: "user",
-                parts: [{ text: query }]
-            }
-        ],
-        config: {
-            systemInstruction: systemPrompt
-        }
+            { role: "user", content: query }
+        ]
     });
 
-    return { answer: response.text };
+    return { answer: response.choices[0]?.message?.content ?? "" };
 }

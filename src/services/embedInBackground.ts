@@ -6,7 +6,8 @@ export const embedInBackground = async (
     mongoId: string,
     content: string,
     userId: string,
-    type: string
+    type: string,
+    brainId: string | null
 ): Promise<void> => {
 
     if (!content.trim()) {
@@ -23,7 +24,7 @@ export const embedInBackground = async (
     };
 
     try {
-        await saveEmbeddings(chunks, mongoId, userId, type);
+        await saveEmbeddings(chunks, mongoId, userId, type, brainId);
         await contentModel.findByIdAndUpdate(
             mongoId,
             { embeddingStatus: "completed" }

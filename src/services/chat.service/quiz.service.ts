@@ -4,16 +4,17 @@ import { detectQuizIntent } from "../detectquizIntent.js";
 
 export const handleQuizResponse = async (query: string, chat: any) => {
     if (chat.quizId) {
-        const intent = await detectQuizIntent(query);
+
+        const quiz = await quizModel.findById(chat.quizId);
+
+        if (!quiz) {
+            throw new Error("quiz not found")
+        };
+
+        const intent = await detectQuizIntent(query, quiz.questions);
 
         if (intent.type !== 'none') {
             let quizContext
-
-            const quiz = await quizModel.findById(chat.quizId);
-
-            if (!quiz) {
-                throw new Error("quiz not found")
-            };
 
             if (intent.type === 'answer') {
                 const questions = quiz.questions.filter(q =>

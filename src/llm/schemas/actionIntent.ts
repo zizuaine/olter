@@ -1,12 +1,11 @@
-import { Type, type Schema } from "@google/genai";
-
-export const actionIntentSchema: Schema = {
-    type: Type.OBJECT,
+export const actionIntentSchema: Record<string, unknown> = {
+    type: "object",
     properties: {
         type: {
-            type: Type.STRING,
+            type: "string",
             enum: ["quiz", "flashcard", "summary", "none"]
         }
     },
-    required: ["type"]
+    required: ["type"],
+    additionalProperties: false
 };

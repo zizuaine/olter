@@ -1,21 +1,19 @@
 import mongoose, { Schema, model } from "mongoose";
 import type { InferSchemaType } from "mongoose";
+import { required } from "zod/mini";
 
 const contentsSchema = new Schema(
     {
         type: {
             type: String,
-            required: true,
             enum: ["note", "link", "pdf", "youtube"],
         },
         title: {
             type: String,
-            required: true,
             trim: true
         },
         link: {
             type: String,
-            required: true
         },
         tags: [{
             type: String,
@@ -25,10 +23,12 @@ const contentsSchema = new Schema(
         }],
         userId: {
             type: mongoose.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         content: {
             type: String,
+            required: true
         },
         summary: {
             type: String,
@@ -43,7 +43,15 @@ const contentsSchema = new Schema(
             enum: ["pending", "processing", "completed", "failed"],
             default: "pending"
         },
-        brainId: {}
+
+        chunkIds: [{
+            type: String
+        }],
+
+        brainId: {
+            type: mongoose.Types.ObjectId,
+            ref: "Brain"
+        }
     }
 )
 export type Content = InferSchemaType<typeof contentsSchema>

@@ -1,18 +1,15 @@
-import { Type, type Schema } from "@google/genai";
-
-export const quizIntentSchema: Schema = {
-    type: Type.OBJECT,
+export const quizIntentSchema: Record<string, unknown> = {
+    type: "object",
     properties: {
         type: {
-            type: Type.STRING,
+            type: "string",
             enum: ["answer", "question", "all_answers", "none"]
         },
         questionNumbers: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.INTEGER
-            }
+            type: "array",
+            items: { type: "integer" }
         }
     },
-    required: ["type", "questionNumbers"]
+    required: ["type", "questionNumbers"],
+    additionalProperties: false
 };

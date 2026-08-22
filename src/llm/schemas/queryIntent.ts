@@ -1,20 +1,22 @@
-import { Type, type Schema } from "@google/genai";
-
-export const queryIntentSchema: Schema = {
-    type: Type.OBJECT,
+export const queryIntentSchema: Record<string, unknown> = {
+    type: "object",
     properties: {
         operation: {
-            type: Type.STRING,
+            type: "string",
             enum: ["answer", "quiz", "flashcard", "summary", "none"]
         },
         target: {
-            type: Type.STRING,
+            type: "string",
             enum: ["specific", "topic", "active", "none"]
         },
+        scope: {
+            type: "string",
+            enum: ["relevant", "full", "none"]
+        },
         contentQuery: {
-            type: Type.STRING,
-            nullable: true
+            type: ["string", "null"]
         }
     },
-    required: ["operation", "target", "contentQuery"]
+    required: ["operation", "target", "scope", "contentQuery"],
+    additionalProperties: false
 };

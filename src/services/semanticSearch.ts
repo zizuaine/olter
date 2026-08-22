@@ -2,14 +2,17 @@ import { pineconeIndex } from "../config/pinecone.js";
 import { generateEmbeddings } from "../llm/embeddings.js";
 import { contentModel } from "../models/contents.js";
 
-export const semanticSearch = async (query: string, user: string) => {
+export const semanticSearch = async (
+    query: string,
+    user: string,
+    brainId: string | null
+) => {
     const queryEmbedding = await generateEmbeddings(query);
-
 
     const result = await pineconeIndex.query({
         vector: queryEmbedding,
         topK: 5,
-        filter: { userId: user },
+        filter: brainId ? { brainId } : { userId: user },
         includeMetadata: true
     });
 

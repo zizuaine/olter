@@ -1,11 +1,8 @@
-import { Type, type Schema } from "@google/genai";
-
-export const summarySchema: Schema = {
-    type: Type.OBJECT,
+export const summarySchema: Record<string, unknown> = {
+    type: "object",
     properties: {
-        summary: {
-            type: Type.STRING,
-        },
+        summary: { type: "string" }
     },
     required: ["summary"],
+    additionalProperties: false
 };

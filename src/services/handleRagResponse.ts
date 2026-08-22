@@ -1,7 +1,6 @@
-import { genResponse } from "../../llm/genResponse.js";
+import { genResponse } from "../llm/genResponse.js";
 
 export const handleRagResponse = async (query: string, user: string, context: string, chat: any) => {
-    //Semantic Search
 
     const { answer } = await genResponse(query, context, chat.messages)
 

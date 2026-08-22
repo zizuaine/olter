@@ -1,59 +1,42 @@
-import { Type, type Schema } from "@google/genai";
-
-export const quizSchema: Schema = {
-    type: Type.OBJECT,
+export const quizSchema: Record<string, unknown> = {
+    type: "object",
     properties: {
         questions: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                    questionNumber: {
-                        type: Type.INTEGER,
-                    },
-                    question: {
-                        type: Type.STRING,
-                    },
+                    questionNumber: { type: "integer" },
+                    question: { type: "string" },
                     options: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.STRING,
-                        },
-                        minItems: "4",
-                        maxItems: "4",
-                    },
+                        type: "array",
+                        items: { type: "string" },
+                        minItems: 4,
+                        maxItems: 4
+                    }
                 },
                 required: ["questionNumber", "question", "options"],
+                additionalProperties: false
             },
-            minItems: "10",
-            maxItems: "10",
+            minItems: 2,
+            maxItems: 10
         },
-
         answers: {
-            type: Type.ARRAY,
+            type: "array",
             items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                    questionNumber: {
-                        type: Type.INTEGER,
-                    },
-                    correctAnswer: {
-                        type: Type.STRING,
-                    },
-                    explanation: {
-                        type: Type.STRING,
-                    },
+                    questionNumber: { type: "integer" },
+                    correctAnswer: { type: "string" },
+                    explanation: { type: "string" }
                 },
-                required: [
-                    "questionNumber",
-                    "correctAnswer",
-                    "explanation",
-                ],
+                required: ["questionNumber", "correctAnswer", "explanation"],
+                additionalProperties: false
             },
-            minItems: "10",
-            maxItems: "10",
-        },
+            minItems: 2,
+            maxItems: 10
+        }
     },
-
     required: ["questions", "answers"],
+    additionalProperties: false
 };

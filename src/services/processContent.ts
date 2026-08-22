@@ -22,6 +22,7 @@ const detectType = (link: string): "link" | "pdf" | "youtube" => {
 
 export const processContent = async (
     user: string,
+    brainId: string | null,
     link?: string,
     title?: string,
     note?: string,
@@ -34,9 +35,10 @@ export const processContent = async (
                 type: "note",
                 userId: user,
                 content: note,
-                embeddingStatus: "pending"
+                embeddingStatus: "pending",
+                brainId: brainId ?? null,
             });
-            embedInBackground(noteContent._id.toString(), note, user, "note")
+            embedInBackground(noteContent._id.toString(), note, user, "note", brainId)
                 .catch(error => console.error("Background embedding failed", error))
             return noteContent;
         } catch (error) {
@@ -61,7 +63,7 @@ export const processContent = async (
         extracted = await parseWebsites(link);
     }
 
-    const metadata = await generateMetadata(extracted.content)
+    const metadata = await generateMetadata(extracted.content);
 
     try {
         const content = await contentModel.create({
@@ -74,9 +76,10 @@ export const processContent = async (
             content: extracted.content,
             summary: metadata.summary,
             sitename: extracted.sitename,
-            embeddingStatus: "pending"
+            embeddingStatus: "pending",
+            brainId: brainId ?? null,
         });
-        embedInBackground(content._id.toString(), extracted.content, user, type)
+        embedInBackground(content._id.toString(), extracted.content, user, type, brainId)
             .catch(error => console.error("Background embedding failed", error))
         return content;
     } catch (error) {

@@ -1,6 +1,6 @@
+import { groq } from "../config/groq.js";
+import { metadataSchema } from "./schemas/metadataSchema.js"; // must be standard JSON Schema now
 
-import { ai } from "../config/genai.js";
-import { metadataSchema } from "./schemas/metadataSchema.js";
 export interface Metadata {
     title: string;
     summary: string;
@@ -9,9 +9,12 @@ export interface Metadata {
 }
 
 export const generateMetadata = async (content: string): Promise<Metadata> => {
-    const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: `
+    const response = await groq.chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        messages: [
+            {
+                role: "user",
+                content: `
         Analyze the following content.
         Content:${content.slice(0, 5000)}
 
@@ -21,21 +24,27 @@ export const generateMetadata = async (content: string): Promise<Metadata> => {
         - Generate exactly 2 topics.
         - Follow the provided JSON schema.
         - Generate exactly one summary sentence (maximum 25 words).
-        `,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: metadataSchema,
-        },
+        `
+            }
+        ],
+        response_format: {
+            type: "json_schema",
+            json_schema: {
+                name: "metadata",
+                schema: metadataSchema,
+                strict: true
+            }
+        }
     });
 
-    const text = response.text;
+    const text = response.choices[0]?.message?.content;
     if (!text) {
-        throw new Error("could not find text")
+        throw new Error("could not find text");
     }
 
     try {
         return JSON.parse(text);
     } catch {
-        throw new Error("Gemini returned invalid JSON.");
+        throw new Error("Groq returned invalid JSON.");
     }
 }

@@ -15,7 +15,7 @@ export const addContents = async (req: Request, res: Response) => {
     }
 
     try {
-        const content = await processContent(user, link, title, note);
+        const content = await processContent(user, null, link, title, note);
         res.status(200).json({
             message: "content successfully added",
             content

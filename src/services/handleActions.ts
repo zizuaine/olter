@@ -23,7 +23,7 @@ type QuizResult = {
     }[];
 };
 
-type SummaryResult = {
+export type SummaryResult = {
     summary: string;
 };
 

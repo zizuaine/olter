@@ -58,10 +58,13 @@ export const signUp = async (req: Request<{}, {}, userBody>, res: Response) => {
             lastName
         })
         return res.status(201).json({
-            id: user._id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName
+            message: "sign-up successful",
+            user: {
+                id: user._id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName
+            }
         });
 
     } catch (error) {
@@ -78,12 +81,18 @@ export const signIn = async (req: Request<{}, {}, userBody>, res: Response) => {
     try {
         const user = await UserModel.findOne({ email });
         if (!user) {
-            throw new Error("user not found. Sign Up first")
+            throw new Error("user not found")
+            res.status(401).json({
+                message: "user not found. Please sign up first"
+            })
         }
 
         const passwordMatched = await bcrypt.compare(password, user.password);
+        console.log("password", passwordMatched)
         if (!passwordMatched) {
-            throw new Error("incorrect password")
+            res.status(401).json({
+                message: "Incorrect Password"
+            })
         }
 
         const token = jwt.sign(

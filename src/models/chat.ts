@@ -1,7 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
 import type { HydratedDocument, InferSchemaType } from "mongoose";
-import { string } from "zod";
-import { required } from "zod/mini";
 
 const messageSchema = new Schema(
     {
@@ -38,7 +36,17 @@ const chatSchema = new Schema({
     activeContentIds: [{
         type: mongoose.Types.ObjectId,
         ref: "Content",
-    }]
+    }],
+
+    activeChunksIds: [{
+        type: String
+    }],
+
+    brainId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Brain"
+    }
+
 }, {
     timestamps: true,
 });

@@ -1,60 +1,98 @@
 import type { QueryIntent } from "./queryResolver.js";
-import type { Chat } from "../../models/chat.js";
+import { chatModel, type Chat } from "../../models/chat.js";
 import type { HydratedDocument } from "mongoose";
 import { semanticSearch } from "../semanticSearch.js";
 import { contentModel } from "../../models/contents.js";
+import { pineconeIndex } from "../../config/pinecone.js";
 
 export const contentResolver = async (
-    userDemand: QueryIntent,
+    intent: QueryIntent,
     chat: HydratedDocument<Chat>,
     query: string,
-    user: string
+    user: string,
 ) => {
-    const userQuery = userDemand.contentQuery ? userDemand.contentQuery : query;
+    const userQuery = intent.contentQuery ? intent.contentQuery : query;
+
+    if (intent.target === "active") {
+        if (intent.scope === "relevant") {
+            if (!chat.activeChunksIds.length) {
+                throw new Error("no active document found")
+            }
+            console.log("activeChunkIds:", chat.activeChunksIds)
+            const records = await pineconeIndex.fetch(
+                { ids: chat.activeChunksIds }
+            );
+            const combinedContent = Object.values(records.records)
+                .map(rec => rec.metadata?.text)
+                .filter((text): text is string => Boolean(text))
+                .join("\n\n---\n\n");
 
 
-    if (userDemand.target === "active") {
-        if (!chat.activeContentIds.length) {
-            throw new Error("no active document found")
+            const contentIds = chat.activeContentIds.map(
+                id => id.toString()
+            );
+
+            return {
+                context: combinedContent,
+                contentIds,
+            };
         }
+        //for Summary
+        if (intent.scope === "full") {
+            const content = await contentModel.find({
+                _id: { $in: chat.activeContentIds }
+            });
 
-        const contents = await contentModel.find({
-            _id: { $in: chat.activeContentIds }
-        });
+            const chunkIds = content.flatMap(content => content.chunkIds);
 
-        if (contents.length === 0) {
-            throw new Error("active content not found");
+            if (!chunkIds.length) {
+                throw new Error("no chunks found");
+            }
+
+            const records = await pineconeIndex.fetch(
+                { ids: chunkIds });
+
+            const chunks = Object.values(records.records)
+                .map(record => record.metadata?.text)
+                .filter(
+                    (text): text is string => Boolean(text)
+                );
+
+            let batchSize = 5;
+            const batches: string[][] = [];
+            for (let i = 0; i < chunks.length; i += batchSize) {
+                batches.push(chunks.slice(i, i + batchSize))
+            }
+            return {
+                batches,
+                contentIds: chat.activeContentIds.map(
+                    id => id.toString()
+                )
+            };
         }
-
-        const combinedContent = contents
-            .map(content => content.content)
-            .filter((content): content is string => Boolean(content))
-            .join("\n\n---\n\n");
-
-
-        const contentIds = chat.activeContentIds.map(
-            id => id.toString()
-        );
-
-        return {
-            context: combinedContent,
-            contentIds,
-            sources: contents
-        };
     };
 
-    if (userDemand.target === "topic") {
-        const { sources, context } = await semanticSearch(
+    const brainId = chat.brainId?.toString() ?? null;
+
+    if (intent.target === "topic") {
+        const { sources, context, matches } = await semanticSearch(
             userQuery,
-            user
+            user,
+            brainId
         );
 
         if (sources.length === 0) {
             throw new Error("no sources found");
         }
+        if (!matches) {
+            throw new Error("no macthes found");
+        }
+
         const contentIds = sources.map(s => s._id.toString());
 
         chat.activeContentIds = sources.map(s => s._id);
+        chat.activeChunksIds = matches.map(match => match.id);
+
         await chat.save();
         return {
             context,
@@ -63,10 +101,11 @@ export const contentResolver = async (
         };
     };
 
-    if (userDemand.target === "specific") {
+    if (intent.target === "specific") {
         const { sources, matches } = await semanticSearch(
             userQuery,
-            user
+            user,
+            brainId
         );
         const source = sources[0];
 
@@ -86,6 +125,7 @@ export const contentResolver = async (
         const contentIds = [source._id.toString()];
 
         chat.activeContentIds = [source._id];
+        chat.activeChunksIds = matches.map(match => match.id);
         await chat.save();
 
         return {
@@ -95,7 +135,7 @@ export const contentResolver = async (
         };
     }
 
-    if (userDemand.target === "none") {
+    if (intent.target === "none") {
         return null;
     }
 

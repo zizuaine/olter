@@ -1,24 +1,39 @@
-import { ai } from "../config/genai.js";
-import type { Schema } from "@google/genai";
+import { groq } from "../config/groq.js";
 
-interface OperationConfig {
+export interface OperationConfig {
     prompt: string,
-    schema: Schema
+    schema: Record<string, unknown>
 }
+
 export const genStructuredOutput = async <T>(operationConfig: OperationConfig, context: string): Promise<T> => {
-    const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: context,
-        config: {
-            systemInstruction: operationConfig.prompt,
-            responseSchema: operationConfig.schema
+    console.log({
+        promptChars: operationConfig.prompt.length,
+        contextChars: context.length,
+        maxCompletionTokens: 2000,
+    });
+    const response = await groq.chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        temperature: 0,
+        max_completion_tokens: 2000,
+        messages: [
+            { role: "system", content: operationConfig.prompt },
+            { role: "user", content: context }
+        ],
+        response_format: {
+            type: "json_schema",
+            json_schema: {
+                name: "response",
+                schema: operationConfig.schema,
+                strict: true
+            }
         }
-    })
-    const text = response.text;
+    });
+
+    const text = response.choices[0]?.message?.content;
 
     if (!text) {
         throw new Error("No response generated");
     }
-
+    console.log(text)
     return JSON.parse(text) as T;
 }

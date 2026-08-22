@@ -1,19 +1,21 @@
-import { Type, type Schema } from "@google/genai";
-
-export const flashcardsSchema: Schema = {
-    type: Type.ARRAY,
-    items: {
-        type: Type.OBJECT,
-        properties: {
-            question: {
-                type: Type.STRING,
+export const flashcardsSchema: Record<string, unknown> = {
+    type: "object",
+    properties: {
+        flashcards: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    question: { type: "string" },
+                    answer: { type: "string" }
+                },
+                required: ["question", "answer"],
+                additionalProperties: false
             },
-            answer: {
-                type: Type.STRING,
-            },
-        },
-        required: ["question", "answer"],
+            minItems: 2,
+            maxItems: 10
+        }
     },
-    minItems: "10",
-    maxItems: "10",
+    required: ["flashcards"],
+    additionalProperties: false
 };
