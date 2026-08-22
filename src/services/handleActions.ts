@@ -15,9 +15,6 @@ type QuizResult = {
         questionNumber: number;
         question: string;
         options: string[];
-    }[];
-    answers: {
-        questionNumber: number;
         correctAnswer: string;
         explanation: string;
     }[];
@@ -84,7 +81,6 @@ export const handleActionResponse = async (
             userId: user,
             contentIds,
             questions: quizResult.questions,
-            answers: quizResult.answers,
         });
         const chat = await chatModel.findOne({ _id: chatId, userId: user });
         if (!chat) {
