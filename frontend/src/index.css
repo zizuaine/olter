@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Nour";
+  src: url("./assets/fonts/nourd-bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("./assets/fonts/HelveticaNeue.otf") format("opentype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Noto Serif";
+  src: url("./assets/fonts/NotoSerif-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@theme {
+  --font-nour: "Nour", sans-serif;
+  --font-helvetica: "Helvetica Neue", sans-serif;
+  --font-noto: "Noto Serif", serif;
+}
