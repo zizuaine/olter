@@ -1,35 +1,118 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toriiGate from "../assets/auth/torigate-auth.png"
 import Button from "../components/button";
+import { useAuth } from "../context/authContext";
+
 export const Auth = () => {
-    const [formData, setFormData] = useState({
+    const [signupData, setSignupData] = useState({
         email: "",
         password: "",
         username: "",
         firstName: "",
         lastName: "",
     })
+
+    const [loginData, setLoginData] = useState({
+        email: "",
+        password: "",
+    })
+
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
     const [isSignUp, setIsSignUp] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [serverError, setServerError] = useState("")
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault;
-        if (!emailRegex.test(formData.email)) {
+
+    const handleSignUp = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!emailRegex.test(signupData.email)) {
             setEmailError("Invalid Email");
             return;
         };
-        if (!passwordRegex.test(formData.password)) {
+        if (!passwordRegex.test(signupData.password)) {
             setPasswordError("Must include 8 chars, one special char, uppercase, lowercase, number")
             return;
         }
         setEmailError("");
         setPasswordError("");
-        console.log(formData)
+        console.log(signupData)
+
+        try {
+            const endPoint = "http://localhost:3000/api/v1/user/signup";
+            const res = await fetch(endPoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(signupData)
+            });
+            const data = await res.json();
+            console.log(data)
+
+            if (!res.ok) {
+                setServerError(data.message);
+                return;
+            }
+
+            setIsSignUp(false);
+            setServerError("");
+            return data;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!emailRegex.test(loginData.email)) {
+            setEmailError("Invalid Email");
+            return;
+        };
+        if (!passwordRegex.test(loginData.password)) {
+            setPasswordError("Must include 8 chars, one special char, uppercase, lowercase, number")
+            return;
+        }
+        setEmailError("");
+        setPasswordError("");
+        console.log(loginData)
+
+        try {
+            const endPoint = "http://localhost:3000/api/v1/user/signin";
+            const res = await fetch(endPoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData)
+            });
+            const data = await res.json();
+            console.log(data)
+
+            if (!res.ok) {
+                setServerError(data.message);
+                return;
+            }
+
+            login(data.token)
+            setServerError("");
+            navigate("/")
+        } catch (error) {
+            console.log(error)
+        }
+
+
     }
     return (
+
         <div className="h-[694px] w-[1200px] overflow-hidden rounded-[22px] bg-[#eeece7] relative shadow-[0px_0px_25px_rgba(0,0,0,0.15)] py-5">
+
             <div className="
                         absolute right-0 top-0
                         flex h-full w-1/2
@@ -38,20 +121,19 @@ export const Auth = () => {
                         ">
                 <form
                     className="flex flex-col"
-                    onSubmit={handleSubmit}>
+                    onSubmit={handleLogin}>
+                    <h2 className="font-helvetica mb-2 inline-block text-[#596579] text-[20px] ">Login to</h2>
                     <h1 className="mb-3 font-nour text-[36px] leading-[1.3]">
-                        <h2 className="font-helvetica mb-2 inline-block text-[#596579] text-[20px] ">Login to</h2>
-                        <br />
                         Where Knowledge Comes Alive
                     </h1>
-                    <span className=" mb-8 font-helvetica inline-block text-[#596579] text-[15px] font-normal font-['Helvetica_Neue']">
+                    <span className=" mb-8 font-helvetica inline-block text-[#596579] text-[15px]">
                         Your space to capture, organize and <br /> connect ideas that matter.
                     </span>
                     <input
                         type="email"
                         placeholder="Email"
-                        value={formData.email}
-                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        value={loginData.email}
+                        onChange={e => setLoginData({ ...loginData, email: e.target.value })}
                         className="
                                 mb-3 h-[35px]
                                 border-0 border-b border-[#5A5A5A]
@@ -65,8 +147,8 @@ export const Auth = () => {
                     <input
                         type="password"
                         placeholder="password"
-                        value={formData.password}
-                        onChange={e => setFormData({ ...formData, password: e.target.value })}
+                        value={loginData.password}
+                        onChange={e => setLoginData({ ...loginData, password: e.target.value })}
                         className="
                                  mb-3 h-[35px]
                                 border-0 border-b border-[#5A5A5A]
@@ -85,12 +167,19 @@ export const Auth = () => {
                             className="text-[#0033CC]"
                             onClick={e => {
                                 e.preventDefault();
+                                setServerError("");
                                 setIsSignUp(true);
                             }}
                         >
                             Sign up
                         </a>
                     </span>
+
+                    {serverError && (
+                        <p className="text-[12px] font-helvetica text-[#C0524A] mb-2 -mt-2">
+                            {serverError}
+                        </p>
+                    )}
                     <Button type="submit">Login <svg
                         width="18"
                         height="18"
@@ -114,25 +203,25 @@ export const Auth = () => {
                         flex-col justify-center
                         px-9
                     ">
-                <form onSubmit={handleSubmit} className="flex flex-col">
+
+                <form onSubmit={handleSignUp} className="flex flex-col">
+                    <h2 className="font-helvetica text-[#596579] text-[20px] ">Sign up to</h2>
                     <h1 className="mb-3 font-nour text-[36px] leading-[1.3]">
-                        <h2 className="font-helvetica mb-2 inline-block text-[#596579] text-[20px] ">Sign up to</h2>
-                        <br />
                         Bring Your Knowledge to Life
                     </h1>
 
                     <input
                         type="text"
                         placeholder="First Name"
-                        value={formData.firstName}
+                        value={signupData.firstName}
                         onChange={e =>
-                            setFormData({
-                                ...formData,
+                            setSignupData({
+                                ...signupData,
                                 firstName: e.target.value
                             })
                         }
                         className="
-                                mb-3 h-[35px]
+                                my-3 h-[35px]
                                 border-0 border-b border-[#5A5A5A]
                                 bg-[#eeece7]
                                 px-1
@@ -144,10 +233,10 @@ export const Auth = () => {
                     <input
                         type="text"
                         placeholder="Last Name"
-                        value={formData.lastName}
+                        value={signupData.lastName}
                         onChange={e =>
-                            setFormData({
-                                ...formData,
+                            setSignupData({
+                                ...signupData,
                                 lastName: e.target.value
                             })
                         }
@@ -164,10 +253,10 @@ export const Auth = () => {
                     <input
                         type="text"
                         placeholder="Username"
-                        value={formData.username}
+                        value={signupData.username}
                         onChange={e =>
-                            setFormData({
-                                ...formData,
+                            setSignupData({
+                                ...signupData,
                                 username: e.target.value
                             })
                         }
@@ -184,10 +273,10 @@ export const Auth = () => {
                     <input
                         type="email"
                         placeholder="Email"
-                        value={formData.email}
+                        value={signupData.email}
                         onChange={e =>
-                            setFormData({
-                                ...formData,
+                            setSignupData({
+                                ...signupData,
                                 email: e.target.value
                             })
                         }
@@ -202,13 +291,14 @@ export const Auth = () => {
                             "
                     />
                     {emailError && <p className="text-[12px] font-helvetica text-[#C0524A] mb-2 -mt-2">{emailError}</p>}
+
                     <input
                         type="password"
                         placeholder="Password"
-                        value={formData.password}
+                        value={signupData.password}
                         onChange={e =>
-                            setFormData({
-                                ...formData,
+                            setSignupData({
+                                ...signupData,
                                 password: e.target.value
                             })
                         }
@@ -223,6 +313,7 @@ export const Auth = () => {
                             "
                     />
                     {passwordError && <p className="text-[12px] font-helvetica text-[#C0524A] mb-2 -mt-2">{passwordError}</p>}
+
                     <span className="text-[15px] font-helvetica my-8">
                         Already have an account?{" "}
                         <a
@@ -230,12 +321,19 @@ export const Auth = () => {
                             className="text-[#0033CC]"
                             onClick={e => {
                                 e.preventDefault();
+                                setServerError("");
                                 setIsSignUp(false);
                             }}
                         >
                             Sign in
                         </a>
                     </span>
+
+                    {serverError && (
+                        <p className="text-[12px] font-helvetica text-[#C0524A] mb-2 -mt-2">
+                            {serverError}
+                        </p>
+                    )}
                     <Button type="submit">Sign Up</Button>
                 </form>
             </div>

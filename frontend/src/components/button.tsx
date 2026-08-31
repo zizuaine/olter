@@ -1,6 +1,6 @@
 type ButtonProps = {
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
     type?: "button" | "submit"
 }
 
@@ -19,7 +19,6 @@ function Button({ children, onClick, type = "button" }: ButtonProps) {
         text-[#0033CC]
         text-[15px] 
         font-helvetica
-        font-semibold
         transition-shadow duration-200
         hover:shadow-[5px_6px_9px_rgba(0,0,0,0.12)]
         cursor-pointer
