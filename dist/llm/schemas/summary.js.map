@@ -1,0 +1,1 @@
+{"version":3,"file":"summary.js","sourceRoot":"","sources":["../../../backend/src/llm/schemas/summary.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,aAAa,GAA4B;IAClD,IAAI,EAAE,QAAQ;IACd,UAAU,EAAE;QACR,OAAO,EAAE,EAAE,IAAI,EAAE,QAAQ,EAAE;KAC9B;IACD,QAAQ,EAAE,CAAC,SAAS,CAAC;IACrB,oBAAoB,EAAE,KAAK;CAC9B,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"brain.d.ts","sourceRoot":"","sources":["../../backend/src/models/brain.ts"],"names":[],"mappings":"AAAA,OAAO,QAA2B,MAAM,UAAU,CAAC;AACnD,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,UAAU,CAAC;AAGhD,QAAA,MAAM,WAAW;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAchB,CAAC;AAEF,MAAM,MAAM,KAAK,GAAG,eAAe,CAAC,OAAO,WAAW,CAAC,CAAC;AACxD,eAAO,MAAM,UAAU;;;;;;;;;;;;;;;;;;;;;;;;;;mCAAqC,CAAC"}

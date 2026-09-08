@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
 type userProfile = {
+    _id: string,
     username: string,
     email: string,
     firstName: string,
@@ -11,6 +12,7 @@ type userProfile = {
 
 type AuthContextType = {
     isAuthenticated: boolean,
+    isLoading: boolean,
     user: userProfile | null,
     login: (token: string) => void,
     logout: () => void
@@ -27,7 +29,8 @@ const fetchUser = async (token: string): Promise<userProfile | null> => {
             }
         });
         if (!res.ok) return null;
-        return await res.json();
+        const data = await res.json()
+        return data.user;
     } catch (error) {
         return null;
     }
@@ -35,6 +38,7 @@ const fetchUser = async (token: string): Promise<userProfile | null> => {
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<userProfile | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const login = async (token: string) => {
         localStorage.setItem("token", token);
@@ -49,8 +53,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (!token) return;
-        fetchUser(token).then((profile) => setUser(profile));
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+        fetchUser(token).then((profile) => setUser(profile)).finally(() => setIsLoading(false));
     }, [])
 
     useEffect(() => {
@@ -64,7 +71,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }, [user]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!user, isLoading, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

@@ -3,7 +3,7 @@ import background from "../assets/background/background.png"
 
 export const BackgroundLayout = () => {
     return (
-        <div className="bg-no-repeat bg-cover bg-fixed min-h-screen flex items-center justify-center"
+        <div className="bg-no-repeat bg-cover bg-fixed min-h-screen "
             style={{ backgroundImage: `url(${background})` }}
         >
             <Outlet />

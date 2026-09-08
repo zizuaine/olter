@@ -1,0 +1,23 @@
+import { chunker } from "../utils/chunking.js";
+import { saveEmbeddings } from "./saveEmbeds.js";
+import { contentModel } from "../models/contents.js";
+export const embedInBackground = async (mongoId, content, userId, type, brainId) => {
+    if (!content.trim()) {
+        throw new Error("No content extracted.");
+    }
+    await contentModel.findByIdAndUpdate(mongoId, { embeddingStatus: "processing" });
+    const chunks = chunker(content).slice(0, 100);
+    if (!chunks) {
+        throw new Error("chunks not received");
+    }
+    ;
+    try {
+        await saveEmbeddings(chunks, mongoId, userId, type, brainId);
+        await contentModel.findByIdAndUpdate(mongoId, { embeddingStatus: "completed" });
+    }
+    catch (error) {
+        console.error("Background embedding failed", error);
+        await contentModel.findByIdAndUpdate(mongoId, { embeddingStatus: "failed" });
+    }
+};
+//# sourceMappingURL=embedInBackground.js.map
