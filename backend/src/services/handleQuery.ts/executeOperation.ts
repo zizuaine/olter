@@ -65,6 +65,7 @@ export const executeOperation = async (
             query,
             user,
             context,
+            contentIds,
             chat
         );
     }

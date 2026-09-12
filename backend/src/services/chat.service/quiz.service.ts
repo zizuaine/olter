@@ -50,7 +50,8 @@ export const handleQuizResponse = async (query: string, chat: any) => {
                 message: "received response successfully",
                 answer: LLMresponse.answer,
                 sources: [],
-                chatId: chat._id
+                chatId: chat._id.toString(),
+                operation: "quiz"
             };
         }
     }

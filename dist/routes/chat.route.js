@@ -5,6 +5,7 @@ const chatRouter = Router();
 chatRouter.get("/", AuthMiddleware, getAllChatsController);
 chatRouter.get("/:id", AuthMiddleware, getChatController);
 chatRouter.post("/message", AuthMiddleware, sendQueryController);
+chatRouter.post("/message/:id", AuthMiddleware, sendQueryController);
 chatRouter.delete("/:id", AuthMiddleware, deleteChatController);
 export { chatRouter };
 //# sourceMappingURL=chat.route.js.map

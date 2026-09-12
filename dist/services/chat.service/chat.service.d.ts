@@ -690,14 +690,17 @@ export declare const getExistingChatService: (chatId: string, user: string) => P
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];
@@ -710,14 +713,17 @@ export declare const getExistingChatService: (chatId: string, user: string) => P
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];
@@ -737,14 +743,17 @@ export declare const getAllChatsService: (user: string) => Promise<(import("mong
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];
@@ -757,14 +766,17 @@ export declare const getAllChatsService: (user: string) => Promise<(import("mong
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];
@@ -784,14 +796,17 @@ export declare const deleteChatService: (chatId: string, user: string) => Promis
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];
@@ -804,14 +819,17 @@ export declare const deleteChatService: (chatId: string, user: string) => Promis
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: import("mongoose").Types.ObjectId[];
     }>;
     activeContentIds: import("mongoose").Types.ObjectId[];
     activeChunksIds: string[];

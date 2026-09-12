@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { useAuth } from "./authContext";
 
 type BrainContextType = {
     selectedBrain: string | null;
@@ -20,9 +21,11 @@ const BrainContext = createContext<BrainContextType | null>(null);
 export const BrainContextProvider = ({ children }: { children: ReactNode }) => {
     const [brains, setBrains] = useState<Brain[]>([])
     const [selectedBrain, setSelectedBrain] = useState<string | null>("personal");
+    const { user, isLoading } = useAuth()
 
     useEffect(() => {
         const fetchBrains = async () => {
+            if (isLoading || !user) return;
             const token = localStorage.getItem("token");
 
             const response = await fetch(
@@ -34,13 +37,18 @@ export const BrainContextProvider = ({ children }: { children: ReactNode }) => {
                 }
             );
 
+            if (!response.ok) {
+                console.error("Failed to fetch brains");
+                return;
+            }
+
             const data = await response.json();
 
             setBrains(data.brains);
         };
 
         fetchBrains();
-    }, []);
+    }, [user]);
 
     const allBrains = [{ _id: "personal", name: "Personal Brain" }, ...brains]
 

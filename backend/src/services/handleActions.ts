@@ -25,9 +25,11 @@ export type SummaryResult = {
 };
 
 type FlashcardResult = {
-    question: string;
-    answer: string;
-}[];
+    flashcards: {
+        question: string;
+        answer: string;
+    }[];
+};
 
 type OperationMap = {
     flashcard: FlashcardResult,
@@ -87,9 +89,63 @@ export const handleActionResponse = async (
             throw new Error("could not find chat")
         }
         chat.quizId = quiz._id;
+        chat.messages.push({
+            role: "assistant",
+            operation: "quiz",
+            content: "I made a quiz from your saved content.",
+            quizId: quiz._id,
+            questions: quizResult.questions,
+            sourceId: contentIds
+        });
         await chat.save();
-        return { quizId: quiz._id, questions: quiz.questions };
+        return {
+            operation: "quiz",
+            answer: "I made a quiz from your saved content.",
+            quizId: quiz._id,
+            questions: quiz.questions
+        };
     }
 
-    return result;
+    if (operation === "flashcard") {
+        const flashcardResult = result as FlashcardResult;
+        const chat = await chatModel.findOne({ _id: chatId, userId: user });
+        if (!chat) {
+            throw new Error("could not find chat")
+        }
+
+        chat.messages.push({
+            role: "assistant",
+            operation: "flashcard",
+            content: "I made flashcards from your saved content.",
+            flashcards: flashcardResult.flashcards,
+            sourceId: contentIds
+        });
+        await chat.save();
+
+        return {
+            operation: "flashcard",
+            answer: "I made flashcards from your saved content.",
+            flashcards: flashcardResult.flashcards
+        };
+    }
+
+    const summaryResult = result as SummaryResult;
+    const chat = await chatModel.findOne({ _id: chatId, userId: user });
+    if (!chat) {
+        throw new Error("could not find chat")
+    }
+
+    chat.messages.push({
+        role: "assistant",
+        operation: "summary",
+        content: summaryResult.summary,
+        sourceId: contentIds
+    });
+    await chat.save();
+
+    return {
+        operation: "summary",
+        answer: summaryResult.summary,
+        summary: summaryResult.summary
+    };
 }

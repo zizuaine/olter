@@ -7,5 +7,6 @@ interface DeleteParams extends ParamsDictionary {
     id: string;
 }
 export declare const deleteContents: (req: Request<DeleteParams>, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const updateContent: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
 export {};
 //# sourceMappingURL=contents.controller.d.ts.map

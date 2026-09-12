@@ -1,7 +1,7 @@
 import { genResponse } from "../llm/genResponse.js";
-export const handleRagResponse = async (query, user, context, chat) => {
+export const handleRagResponse = async (query, user, context, contentIds, chat) => {
     const { answer } = await genResponse(query, context, chat.messages);
-    chat.messages.push({ role: "assistant", content: answer });
+    chat.messages.push({ role: "assistant", content: answer, sourceId: contentIds });
     await chat.save();
     return {
         message: "received response successfully",

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import authTorii from "../assets/auth/torigate-auth.png"
 import Button from "../components/button";
 import { useAuth } from "../context/authContext";
-import { div } from "motion/react-client";
 
 export const Auth = () => {
     const [signupData, setSignupData] = useState({

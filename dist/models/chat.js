@@ -6,6 +6,10 @@ const messageSchema = new Schema({
         required: true,
     },
     content: { type: String, required: true },
+    sourceId: [{
+            type: mongoose.Types.ObjectId,
+            ref: "Content"
+        }],
     createdAt: { type: Date, default: Date.now }
 });
 const chatSchema = new Schema({

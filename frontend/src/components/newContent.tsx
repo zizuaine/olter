@@ -164,21 +164,22 @@ const NewContentModal = ({
                     </>
                 )}
 
-                {contentType === "link" ? (
-                    <input
-                        value={link}
-                        onChange={(e) => setLink(e.target.value)}
-                        placeholder="Paste your link..."
-                        className="newContentInputField"
-                    />
-                ) : (
-                    <textarea
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="Write your note..."
-                        className="newContentNote"
-                    />
-                )}
+                {contentType === "link" ?
+                    (
+                        <input
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                            placeholder="Paste your link..."
+                            className="newContentInputField"
+                        />
+                    ) : (
+                        <textarea
+                            value={note}
+                            onChange={(e) => setNote(e.target.value)}
+                            placeholder="Write your note..."
+                            className="newContentNote"
+                        />
+                    )}
 
                 <div className="flex gap-2">
                     <button

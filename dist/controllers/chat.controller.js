@@ -3,7 +3,8 @@ import { brainModel } from "../models/brain.js";
 import { chatModel } from "../models/chat.js";
 export const sendQuery = async (req, res) => {
     const user = req.userId;
-    const { query, chatId } = req.body;
+    const chatId = req.params.id;
+    const { query } = req.body;
     if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
     }

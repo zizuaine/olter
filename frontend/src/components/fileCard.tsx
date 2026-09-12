@@ -136,7 +136,7 @@ const FileCard = ({ content, cardToggleMenu, setCardToggleMenu, onClick }: FileC
                 {content.title}
             </h2>
 
-            {/* Description */}
+            {/* summary */}
             <p
                 className="
                     mt-[14px]

@@ -8,7 +8,30 @@ const messageSchema = new Schema(
             enum: ["user", "assistant"],
             required: true,
         },
-        content: { type: String, required: true },
+        content: { type: String },
+        operation: {
+            type: String,
+            enum: ["answer", "summary", "quiz", "flashcard", "none"],
+        },
+        quizId: {
+            type: mongoose.Types.ObjectId,
+            ref: "Quiz"
+        },
+        questions: [{
+            questionNumber: { type: Number },
+            question: { type: String },
+            options: [String],
+            correctAnswer: { type: String },
+            explanation: { type: String }
+        }],
+        flashcards: [{
+            question: { type: String },
+            answer: { type: String }
+        }],
+        sourceId: [{
+            type: mongoose.Types.ObjectId,
+            ref: "Content"
+        }],
         createdAt: { type: Date, default: Date.now }
     }
 );

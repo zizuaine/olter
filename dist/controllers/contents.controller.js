@@ -34,6 +34,7 @@ export const getContents = async (req, res) => {
             brainId: brainId === "null" ? null : brainId
         })
             .select("type title link tags topics userId summary sitename embeddingStatus createdAt")
+            .sort({ createdAt: -1 })
             .populate("userId", "username");
         res.status(200).json({
             message: "contents fetched successfully",
@@ -51,10 +52,22 @@ export const getContent = async (req, res) => {
     const user = req.userId;
     const { id } = req.params;
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
     }
     try {
-        const content = await contentModel.findById(id);
+        const content = await contentModel
+            .findOne({
+            _id: id,
+            userId: user
+        })
+            .populate("userId", "username");
+        if (!content) {
+            return res.status(404).json({
+                message: "Content not found"
+            });
+        }
         res.status(200).json({
             message: "content fetched successfully",
             content
@@ -90,5 +103,34 @@ export const deleteContents = async (req, res) => {
             message: "Failed to delete content",
         });
     }
+};
+export const updateContent = async (req, res) => {
+    const user = req.userId;
+    const { id } = req.params;
+    if (!user) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+    const { title, summary, content } = req.body;
+    const updatedContent = await contentModel.findOneAndUpdate({
+        _id: id,
+        userId: user
+    }, {
+        title,
+        summary,
+        content
+    }, {
+        new: true
+    }).populate("userId", "username");
+    if (!updatedContent) {
+        return res.status(404).json({
+            message: "Content not found"
+        });
+    }
+    res.status(200).json({
+        message: "Content updated successfully",
+        content: updatedContent
+    });
 };
 //# sourceMappingURL=contents.controller.js.map

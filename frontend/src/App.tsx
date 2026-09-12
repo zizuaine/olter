@@ -8,37 +8,52 @@ import { ProtectRoute } from './components/protectRoute';
 import { AuthContextProvider } from './context/authContext';
 import { Sidebar } from "./components/sidebar"
 import { BrainContextProvider } from './context/brainContext';
+import { ChatContextProvider } from './context/chatContext';
+import ChatPage from './pages/chat';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthContextProvider>
-        <BrainContextProvider>
-          <Routes>
-            <Route element={<BackgroundLayout />}>
+        <Routes>
 
+          <Route element={<BackgroundLayout />}>
+
+            <Route
+              path="/auth"
+              element={<Auth />}
+            />
+
+            <Route element={<ProtectRoute />}>
               <Route
-                path="/auth"
-                element={<Auth />}
-              />
+                element={
+                  <BrainContextProvider>
+                    <ChatContextProvider>
+                      <Sidebar />
+                    </ChatContextProvider>
+                  </BrainContextProvider>
+                }
+              >
+                <Route
+                  path="/files"
+                  element={<Files />}
+                />
 
-              <Route element={<ProtectRoute />}>
-                <Route element={<Sidebar />}>
-                  <Route
-                    path="/files"
-                    element={<Files />}
-                  />
+                <Route
+                  path="/"
+                  element={<Home />}
+                />
 
-                  <Route
-                    path="/"
-                    element={<Home />}
-                  />
-                </Route>
+                <Route
+                  path='/chat/:chatId'
+                  element={<ChatPage />}
+                />
               </Route>
-
             </Route>
-          </Routes>
-        </BrainContextProvider>
+
+          </Route>
+
+        </Routes>
       </AuthContextProvider>
     </BrowserRouter>
   );

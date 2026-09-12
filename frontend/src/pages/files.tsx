@@ -7,6 +7,7 @@ import NewContentModal from "../components/newContent"
 import { AnimatePresence } from "framer-motion"
 import { motion } from "framer-motion"
 import ExpandedCard from "../components/expandedCard"
+import filesBackground from "../assets/background/dashboard-background.png"
 
 export type Content = {
     _id: string,
@@ -109,8 +110,12 @@ export const Files = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col w-full relative">
-            <div className="heading relative mb-24">
+        <div
+            style={{
+                backgroundImage: `url(${filesBackground})`
+            }}
+            className="min-h-screen flex flex-col w-full relative overflow-hidden bg-no-repeat bg-cover bg-center">
+            <div className="heading relative shrink-0 mb-24">
                 <div className="font-helvetica text-[14px] text-[#0033CC]
                                 h-[50px] items-center m-2 pl-16
                                 flex justify-between w-full 
@@ -175,9 +180,9 @@ export const Files = () => {
                 </div>
             </div>
 
-            <main className="ml-11">
+            <main className="ml-11 flex-1 min-h-0">
 
-                <div className="cards-container mt-0">
+                <div className="cards-container  h-full overflow-y-auto mt-0">
                     {contents.map(content => (
                         <FileCard
                             key={content._id}

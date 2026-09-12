@@ -27,7 +27,7 @@ export const executeOperation = async (intent, query, resolvedContent, chat, use
         if (!context) {
             throw new Error("No relevant context found for this operation");
         }
-        return handleRagResponse(query, user, context, chat);
+        return handleRagResponse(query, user, context, contentIds, chat);
     }
 };
 //# sourceMappingURL=executeOperation.js.map

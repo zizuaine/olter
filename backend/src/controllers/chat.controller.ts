@@ -11,7 +11,8 @@ import { chatModel } from "../models/chat.js";
 export const sendQuery = async (req: Request, res: Response) => {
 
     const user = req.userId;
-    const { query, chatId } = req.body;
+    const chatId = req.params.id;
+    const { query } = req.body;
 
     if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -43,7 +44,7 @@ export const sendQuery = async (req: Request, res: Response) => {
             result = await sendQueryService(query, chat._id.toString(), user);
         } else {
 
-            result = await sendQueryService(query, chatId, user);
+            result = await sendQueryService(query, chatId as string, user);
         }
         return res.status(result.status).json(result.body);
 

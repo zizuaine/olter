@@ -1,35 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import {
     Folder,
     MessageCircle,
     ChevronDown,
-    LogOut
+    LogOut,
+    Plus
 } from "lucide-react";
-import torrigate from "../assets/sidebar-logo/sidebar-logo.png"
-import filesBackground from "../assets/background/files.png"
+import torrigate from "../assets/sidebar-logo/olter-torii.svg"
 import { useAuth } from "../context/authContext";
 import { motion } from "motion/react";
 import { Connections } from "./connections";
+import type { Chat } from "../pages/chat";
+import { h2 } from "motion/react-client";
+import { useChats } from "../context/chatContext";
 
 export const Sidebar = () => {
     const { user, logout } = useAuth();
+    const { chats } = useChats();
 
     const [accountOpen, setAccountOpen] = useState(false);
     const [connectionsOpen, setConnectionsOpen] = useState(false);
 
+
     const navItems = [
-        { to: "/", label: "Conversations", icon: MessageCircle },
+        { to: "/", label: "New", icon: Plus },
         { to: "/files", label: "Files", icon: Folder },
     ];
 
     return (
-        <div
-            style={{
-                backgroundImage: `url(${filesBackground})`
-            }}
-            className="flex min-h-screen bg-no-repeat bg-cover bg-center">
-
+        <div className="flex min-h-screen">
             {/* Sidebar */}
             <motion.aside
                 initial={{ x: -254, opacity: 0 }}
@@ -37,19 +37,20 @@ export const Sidebar = () => {
                 transition={{ duration: 0.7, ease: "easeOut" }}
                 className="
                         w-[254px] h-screen flex-shrink-0
+                        z-20
                         bg-[#F0E8DE]
                         border border-[#DDD5C6]
                         shadow-[5px_4px_17px_0_rgba(0,0,0,0.25)]
                         flex flex-col justify-between
-                        px-5 py-8
+                        px-5 py-5
                     "
             >
                 <div>
-                    <div className="mt-5 mb-10 flex flex-col items-center">
-                        <span className="font-nour text-[28px] text-[#0033CC] mb-2">
+                    <div className="mt-1 mb-5 flex flex-col items-center">
+                        <span className="font-nour text-[28px] text-[#0033CC] mb-0">
                             olter
                         </span>
-                        <img src={torrigate} alt="logo" className="w-30 h-30" />
+                        <img src={torrigate} alt="logo" className="w-30 h-25" />
                     </div>
 
                     <nav className="flex flex-col gap-3">
@@ -111,6 +112,36 @@ export const Sidebar = () => {
                         />
 
                     </nav>
+
+                    {chats.length > 0 && (
+                        <>
+                            <h2 className="mt-4 pl-3 font-helvetica text-[#596579] text-[14px]">chats</h2>
+                            <div className="relative  flex-1 overflow-hidden">
+
+                                <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 
+                                            bg-gradient-to-b from-[#F0E8DE] to-transparent z-10" />
+
+                                <div className="overflow-y-auto h-full px-1 pt-2 pb-2 flex flex-col gap-1">
+                                    {chats.map(chat => (
+                                        <NavLink
+                                            key={chat._id}
+                                            to={`/chat/${chat._id}`}
+                                            className={({ isActive }) =>
+                                                `px-3 py-2 rounded-xl text-[13px] font-helvetica truncate
+                                    ${isActive
+                                                    ? "text-[#0033CC] bg-[#E5E4EA]"
+                                                    : "text-[#596579] hover:bg-white/50"
+                                                }`
+                                            }
+                                        >
+                                            {chat.title}
+                                        </NavLink>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </>
+                    )}
                 </div>
 
                 {/* Account */}

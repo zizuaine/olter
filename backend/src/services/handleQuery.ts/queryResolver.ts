@@ -7,7 +7,7 @@ import { genStructuredOutput } from "../../llm/genStructuredOutput.js";
 export type QueryIntent = {
     operation: "answer" | "quiz" | "flashcard" | "summary" | "none";
     target: "specific" | "topic" | "active" | "none";
-    scope: "relevant" | "full" | "null";
+    scope: "relevant" | "full" | "none";
     contentQuery: string | null;
 };
 

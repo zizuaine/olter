@@ -9,14 +9,17 @@ declare const chatSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -29,14 +32,17 @@ declare const chatSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -53,14 +59,17 @@ declare const chatSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -79,14 +88,17 @@ declare const chatSchema: mongoose.Schema<any, mongoose.Model<any, any, any, any
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -107,14 +119,17 @@ export declare const chatModel: mongoose.Model<{
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -127,14 +142,17 @@ export declare const chatModel: mongoose.Model<{
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -147,14 +165,17 @@ export declare const chatModel: mongoose.Model<{
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];
@@ -173,14 +194,17 @@ export declare const chatModel: mongoose.Model<{
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }, {}, {}> & {
         createdAt: NativeDate;
         content: string;
         role: "user" | "assistant";
+        sourceId: mongoose.Types.ObjectId[];
     }>;
     activeContentIds: mongoose.Types.ObjectId[];
     activeChunksIds: string[];

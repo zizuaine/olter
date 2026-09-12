@@ -1,1 +1,1 @@
-{"version":3,"file":"contents.route.d.ts","sourceRoot":"","sources":["../../backend/src/routes/contents.route.ts"],"names":[],"mappings":"AASA,QAAA,MAAM,cAAc,4CAAW,CAAC;AAOhC,OAAO,EAAE,cAAc,EAAE,CAAC"}
+{"version":3,"file":"contents.route.d.ts","sourceRoot":"","sources":["../../backend/src/routes/contents.route.ts"],"names":[],"mappings":"AAUA,QAAA,MAAM,cAAc,4CAAW,CAAC;AAQhC,OAAO,EAAE,cAAc,EAAE,CAAC"}
