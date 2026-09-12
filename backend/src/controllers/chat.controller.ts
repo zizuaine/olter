@@ -8,8 +8,32 @@ import {
 import { brainModel } from "../models/brain.js";
 import { chatModel } from "../models/chat.js";
 
-export const sendQuery = async (req: Request, res: Response) => {
+export const createChat = async (req: Request, res: Response) => {
+    const user = req.userId;
+    const { query, brainId } = req.body;
 
+    if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    };
+
+    try {
+        const chat = await chatModel.create({
+            userId: user,
+            title: query.slice(0, 50),
+            brainId: brainId ?? null
+        })
+        return res.status(201).json({
+            chatId: chat._id.toString()
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Failed to get a response"
+        })
+    }
+}
+
+export const sendQuery = async (req: Request, res: Response) => {
     const user = req.userId;
     const chatId = req.params.id;
     const { query } = req.body;
@@ -18,34 +42,15 @@ export const sendQuery = async (req: Request, res: Response) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
+    if (!chatId) {
+        return res.status(400).json({
+            message: "Chat ID is required"
+        });
+    }
     try {
 
-        let result;
+        const result = await sendQueryService(query, chatId.toString(), user);
 
-        if (!chatId) {
-            const { brainId } = req.body;
-            if (brainId) {
-                const brain = await brainModel.findOne({
-                    _id: brainId,
-                    members: user
-                });
-
-                if (!brain) {
-                    return res.status(403).json({
-                        message: "You are not a member of this brain"
-                    });
-                }
-            }
-            const chat = await chatModel.create({
-                userId: user,
-                title: query.slice(0, 50),
-                brainId: brainId ?? null,
-            });
-            result = await sendQueryService(query, chat._id.toString(), user);
-        } else {
-
-            result = await sendQueryService(query, chatId as string, user);
-        }
         return res.status(result.status).json(result.body);
 
     } catch (error) {
@@ -78,7 +83,6 @@ export const getExistingChat = async (req: Request, res: Response) => {
         res.status(200).json({
             message: "received chat successfully",
             chat,
-            chatId: chat._id
         });
     } catch (error) {
         console.error(error);

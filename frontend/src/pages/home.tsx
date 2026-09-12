@@ -1,7 +1,7 @@
 import homeBackground from "../assets/background/home.png"
 import { useBrain } from "../context/brainContext";
 import ChatBar from "../components/chatBar";
-
+import { useNavigate } from "react-router-dom";
 
 
 export const Home = () => {
@@ -10,6 +10,26 @@ export const Home = () => {
     const brainId = selectedBrain === "personal"
         ? null
         : selectedBrain;
+
+    const navigate = useNavigate();
+
+    const createChat = async (query: string): Promise<string | null> => {
+        const token = localStorage.getItem("token")
+        const res = await fetch("http://localhost:3000/api/v1/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                query,
+                brainId
+            })
+        })
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.chatId;
+    }
 
     return (
         <div
@@ -51,6 +71,7 @@ export const Home = () => {
             >
                 <ChatBar
                     brainId={brainId}
+                    createChat={createChat}
                 />
             </div>
             <div

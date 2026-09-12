@@ -8,24 +8,36 @@ type ChatBarProps = {
     chatId?: string;
     onSend?: (query: string) => void;
     onResponse?: (data: any) => void;
+    createChat?: (query: string) => Promise<string | null>;
 }
 
-const ChatBar = ({ brainId, chatId, onResponse, onSend }: ChatBarProps) => {
-    const [query, setQuery] = useState("")
-    const navigate = useNavigate()
+const ChatBar = ({ brainId, chatId, onResponse, onSend, createChat }: ChatBarProps) => {
+    const [query, setQuery] = useState("");
+
     const { addChat } = useChats();
+    const navigate = useNavigate();
 
     const sendQuery = async () => {
         if (!query.trim()) return;
 
         const currentQuery = query;
-        setQuery("")
+        setQuery("");
+
+        let currentChatId: string | null = chatId ?? null;
+
+        if (!currentChatId && createChat) {
+            currentChatId = await createChat(query)
+        }
+
+        if (!currentChatId) return;
+
+        navigate(`/chat/${currentChatId}`)
 
         onSend?.(currentQuery)
 
         const token = localStorage.getItem("token");
-        const url = chatId ? `http://localhost:3000/api/v1/chat/message/${chatId}`
-            : `http://localhost:3000/api/v1/chat/message`
+
+        const url = `http://localhost:3000/api/v1/chat/message/${currentChatId}`
         const res = await fetch(url, {
             method: "POST",
             headers: {
@@ -40,7 +52,7 @@ const ChatBar = ({ brainId, chatId, onResponse, onSend }: ChatBarProps) => {
 
         let content: string | undefined;
 
-        if (data.operation === "answer" || data.operation === "quiz") content = data.answer;
+        if (data.operation === "answer") content = data.answer;
         if (data.operation === "summary") content = data.summary;
 
         onResponse?.({
@@ -55,7 +67,6 @@ const ChatBar = ({ brainId, chatId, onResponse, onSend }: ChatBarProps) => {
 
         if (!chatId) {
             addChat({ _id: data.chatId, title: query.slice(0, 50) })
-            navigate(`/chat/${data.chatId}`)
         }
     }
     return (

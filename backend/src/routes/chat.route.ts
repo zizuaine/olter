@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    createChat as createChatController,
     sendQuery as sendQueryController,
     getExistingChat as getChatController,
     getAllChats as getAllChatsController,
@@ -10,8 +11,8 @@ import { AuthMiddleware } from "../middleware/auth.js";
 const chatRouter = Router();
 
 chatRouter.get("/", AuthMiddleware, getAllChatsController);
+chatRouter.post("/", AuthMiddleware, createChatController);
 chatRouter.get("/:id", AuthMiddleware, getChatController);
-chatRouter.post("/message", AuthMiddleware, sendQueryController);
 chatRouter.post("/message/:id", AuthMiddleware, sendQueryController);
 chatRouter.delete("/:id", AuthMiddleware, deleteChatController);
 

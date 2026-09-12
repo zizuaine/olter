@@ -10,7 +10,7 @@ import remarkGfm from "remark-gfm";
 import SourceCard from "../components/sourceCard";
 import avatar from "../assets/sidebar-logo/avatar.png"
 import QuizCard from "../components/quizcard";
-import FlashCard from "../components/flashcard";
+import FlashcardsCard from "../components/flashcardsCard";
 
 export type Source = Content
 
@@ -209,7 +209,7 @@ const ChatPage = () => {
                                                 )}
 
                                                 {message.operation === "flashcard" && message.flashcards && (
-                                                    <FlashCard
+                                                    <FlashcardsCard
                                                         flashcards={message.flashcards}
                                                     />
                                                 )}
@@ -260,6 +260,7 @@ const ChatPage = () => {
                                 </div>
                             </div>
                         )}
+                        <div ref={messagesEndRef} />
                     </div>
                 </div>
             </main>

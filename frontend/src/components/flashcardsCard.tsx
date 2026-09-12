@@ -9,7 +9,7 @@ type FlashCardProps = {
     flashcards: Flashcard[];
 };
 
-const FlashCard = ({ flashcards }: FlashCardProps) => {
+const FlashcardsCard = ({ flashcards }: FlashCardProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [flipped, setFlipped] = useState(false);
 
@@ -83,4 +83,4 @@ const FlashCard = ({ flashcards }: FlashCardProps) => {
     );
 };
 
-export default FlashCard;
+export default FlashcardsCard;
