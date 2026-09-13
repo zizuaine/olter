@@ -100,7 +100,7 @@ export const handleActionResponse = async (
         await chat.save();
         return {
             operation: "quiz",
-            answer: "I made a quiz from your saved content.",
+            content: "I made a quiz from your saved content.",
             quizId: quiz._id,
             questions: quiz.questions
         };
@@ -124,7 +124,7 @@ export const handleActionResponse = async (
 
         return {
             operation: "flashcard",
-            answer: "I made flashcards from your saved content.",
+            content: "I made flashcards from your saved content.",
             flashcards: flashcardResult.flashcards
         };
     }
@@ -145,7 +145,7 @@ export const handleActionResponse = async (
 
     return {
         operation: "summary",
-        answer: summaryResult.summary,
-        summary: summaryResult.summary
+        content: summaryResult.summary,
+
     };
 }

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { ArrowLeft, MoreHorizontal } from "lucide-react";
 import ChatBar from "../components/chatBar";
 import { useBrain } from "../context/brainContext";
@@ -11,6 +11,7 @@ import SourceCard from "../components/sourceCard";
 import avatar from "../assets/sidebar-logo/avatar.png"
 import QuizCard from "../components/quizcard";
 import FlashcardsCard from "../components/flashcardsCard";
+
 
 export type Source = Content
 
@@ -40,14 +41,14 @@ type Message = {
 };
 
 type ChatResponse = {
-    query: string;
     operation: "answer" | "summary" | "quiz" | "flashcard" | "none";
     content?: string;
     quizId?: string;
     questions?: QuizQuestion[];
     flashcards?: Flashcard[];
-    sources: Source[];
+    sources?: Source[];
 };
+
 export type Chat = {
     _id: string;
     title: string;
@@ -66,11 +67,59 @@ const ChatPage = () => {
     const [chatData, setChatData] = useState<Chat | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
+    const location = useLocation()
 
+    {/*for new chat */ }
     useEffect(() => {
+        if (location.state?.userMessage) {
+            const query = location.state.userMessage;
+
+            if (!query || !chatId) return;
+            setChatData({
+                _id: chatId,
+                title: query.slice(0, 50),
+                brainId: brainId,
+                messages: []
+            })
+
+            addUserMessage(query);
+
+            const sendMessage = async () => {
+                setLoading(true)
+                const token = localStorage.getItem("token");
+                const res = await fetch(`http://localhost:3000/api/v1/chat/message/${chatId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        query,
+                    })
+                })
+                if (!res.ok) {
+                    setLoading(false)
+                    return
+                };
+                const data = await res.json();
+                handleResponse(data)
+            }
+            sendMessage();
+
+            navigate(".", {
+                replace: true,
+                state: null
+            });
+        }
+    }, [chatId])
+
+    {/*for exisiting chat */ }
+    useEffect(() => {
+        if (location.state?.userMessage) return;
         const fetchCurrentChat = async () => {
             const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/api/v1/chat/${chatId}`, {
+                method: "GET",
                 headers: { authorization: `Bearer ${token}` }
             });
             if (!res.ok) return;
@@ -78,9 +127,27 @@ const ChatPage = () => {
             setChatData(data.chat);
         };
         fetchCurrentChat();
+
     }, [chatId]);
 
-    const handleSend = (query: string) => {
+    const handleSubmit = async (query: string) => {
+        addUserMessage(query);
+        setLoading(true)
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+            `http://localhost:3000/api/v1/chat/message/${chatId}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json", authorization: `Bearer ${token}` },
+                body: JSON.stringify({ query })
+            }
+        );
+        if (!res.ok) { setLoading(false); return; }
+        const data = await res.json();
+        handleResponse(data);
+        setLoading(false)
+    }
+    const addUserMessage = (query: string) => {
         setChatData(prev => {
             if (!prev) return null;
             return {
@@ -115,6 +182,8 @@ const ChatPage = () => {
                         operation: data.operation,
 
                         content: data.content,
+
+                        quizId: data.quizId,
 
                         questions: data.questions,
 
@@ -268,10 +337,8 @@ const ChatPage = () => {
 
             <div className="m-auto mb-8">
                 <ChatBar
-                    brainId={brainId}
-                    chatId={chatId}
-                    onSend={handleSend}
-                    onResponse={handleResponse}
+                    onSubmit={handleSubmit}
+                    disabled={loading}
                 />
             </div>
         </div>

@@ -1,74 +1,30 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useChats } from "../context/chatContext";
 
 type ChatBarProps = {
-    brainId: string | null;
-    chatId?: string;
-    onSend?: (query: string) => void;
-    onResponse?: (data: any) => void;
-    createChat?: (query: string) => Promise<string | null>;
+    onSubmit?: (query: string) => void;
+    createChat?: (query: string) => void;
+    disabled: boolean
 }
 
-const ChatBar = ({ brainId, chatId, onResponse, onSend, createChat }: ChatBarProps) => {
+const ChatBar = ({ createChat, onSubmit, disabled }: ChatBarProps) => {
     const [query, setQuery] = useState("");
 
-    const { addChat } = useChats();
-    const navigate = useNavigate();
+    const sendQuery = () => {
+        if (!query.trim() || disabled) return;
 
-    const sendQuery = async () => {
-        if (!query.trim()) return;
+        if (createChat) {
+            createChat(query);
+            setQuery("");
+            return
+        };
 
-        const currentQuery = query;
-        setQuery("");
-
-        let currentChatId: string | null = chatId ?? null;
-
-        if (!currentChatId && createChat) {
-            currentChatId = await createChat(query)
-        }
-
-        if (!currentChatId) return;
-
-        navigate(`/chat/${currentChatId}`)
-
-        onSend?.(currentQuery)
-
-        const token = localStorage.getItem("token");
-
-        const url = `http://localhost:3000/api/v1/chat/message/${currentChatId}`
-        const res = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ query, brainId })
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        console.log(data)
-
-        let content: string | undefined;
-
-        if (data.operation === "answer") content = data.answer;
-        if (data.operation === "summary") content = data.summary;
-
-        onResponse?.({
-            query: currentQuery,
-            operation: data.operation,
-            content,
-            quizId: data.quizId,
-            questions: data.questions,
-            flashcards: data.flashcards,
-            sources: data.sources
-        });
-
-        if (!chatId) {
-            addChat({ _id: data.chatId, title: query.slice(0, 50) })
+        if (onSubmit) {
+            onSubmit(query);
+            setQuery("");
         }
     }
+
     return (
         <div className="  w-[620px]
                 h-[50px]

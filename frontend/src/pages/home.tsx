@@ -2,34 +2,57 @@ import homeBackground from "../assets/background/home.png"
 import { useBrain } from "../context/brainContext";
 import ChatBar from "../components/chatBar";
 import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
+import { useChats } from "../context/chatContext";
 
 export const Home = () => {
-
+    const [isLoading, setIsLoading] = useState(false);
     const { selectedBrain } = useBrain();
     const brainId = selectedBrain === "personal"
         ? null
         : selectedBrain;
 
+    const { addChat } = useChats();
     const navigate = useNavigate();
 
-    const createChat = async (query: string): Promise<string | null> => {
-        const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:3000/api/v1/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                query,
-                brainId
-            })
-        })
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.chatId;
-    }
+    const createChat = async (query: string) => {
+        setIsLoading(true);
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(
+                "http://localhost:3000/api/v1/chat",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        query,
+                        brainId
+                    })
+                }
+            );
+
+            if (!res.ok) return;
+
+            const data = await res.json();
+
+            addChat({
+                _id: data.chatId,
+                title: query.slice(0, 50)
+            });
+
+            navigate(`/chat/${data.chatId}`, {
+                state: { userMessage: query }
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     return (
         <div
@@ -70,8 +93,8 @@ export const Home = () => {
             "
             >
                 <ChatBar
-                    brainId={brainId}
                     createChat={createChat}
+                    disabled={isLoading}
                 />
             </div>
             <div
@@ -88,6 +111,13 @@ export const Home = () => {
                     coversation.
                 </h1>
             </div>
+            {isLoading && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-[550px] flex gap-1">
+                    <span className="animate-bounce text-[#0033CC]">•</span>
+                    <span className="animate-bounce delay-100 text-[#0033CC]">•</span>
+                    <span className="animate-bounce delay-200 text-[#0033CC]">•</span>
+                </div>
+            )}
         </div>
     )
 }
