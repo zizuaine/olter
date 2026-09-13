@@ -92,7 +92,6 @@ export const handleActionResponse = async (
         chat.messages.push({
             role: "assistant",
             operation: "quiz",
-            content: "I made a quiz from your saved content.",
             quizId: quiz._id,
             questions: quizResult.questions,
             sourceId: contentIds
@@ -100,7 +99,6 @@ export const handleActionResponse = async (
         await chat.save();
         return {
             operation: "quiz",
-            content: "I made a quiz from your saved content.",
             quizId: quiz._id,
             questions: quiz.questions
         };
@@ -116,7 +114,6 @@ export const handleActionResponse = async (
         chat.messages.push({
             role: "assistant",
             operation: "flashcard",
-            content: "I made flashcards from your saved content.",
             flashcards: flashcardResult.flashcards,
             sourceId: contentIds
         });
@@ -124,7 +121,6 @@ export const handleActionResponse = async (
 
         return {
             operation: "flashcard",
-            content: "I made flashcards from your saved content.",
             flashcards: flashcardResult.flashcards
         };
     }
@@ -146,6 +142,5 @@ export const handleActionResponse = async (
     return {
         operation: "summary",
         content: summaryResult.summary,
-
     };
 }
