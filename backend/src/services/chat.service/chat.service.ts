@@ -54,7 +54,7 @@ export const sendQueryService = async (
             body: {
                 message: "received response successfully",
                 operation: "none",
-                answer: nonContentAnswer,
+                content: nonContentAnswer,
                 sources: [],
                 chatId: chat._id.toString(),
             },
@@ -95,7 +95,9 @@ export const getExistingChatService = async (chatId: string, user: string) => {
 }
 
 export const getAllChatsService = async (user: string) => {
-    const chats = await chatModel.find({ userId: user })
+    const chats = await chatModel
+        .find({ userId: user })
+        .sort({ createdAt: -1 })
 
     return chats;
 }
