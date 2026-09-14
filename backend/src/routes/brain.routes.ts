@@ -21,10 +21,15 @@ brainRouter.post("/", AuthMiddleware, async (req: Request, res: Response) => {
             members: [user]
         });
 
-        res.status(200).json({
+        res.status(201).json({
             message: "New Brain created",
+            brain: {
+                _id: brain._id,
+                name: brain.name,
+                ownerId: brain.ownerId
+            },
             token: brain.shareToken
-        })
+        });
     } catch (error) {
         console.error(error);
         res.status(401).json({
@@ -55,10 +60,20 @@ brainRouter.post("/join/:token", AuthMiddleware, async (req: Request, res: Respo
             { new: true }
         );
 
+        if (!brain) {
+            return res.status(404).json({
+                message: "Invalid brain token"
+            });
+        }
+
         res.status(200).json({
-            message: "Brain found",
-            brain
-        })
+            message: "Joined brain",
+            brain: {
+                _id: brain._id,
+                name: brain.name,
+                ownerId: brain.ownerId
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(401).json({
@@ -116,9 +131,11 @@ brainRouter.get("/:id", AuthMiddleware, async (req: Request, res: Response) => {
 
         res.status(200).json({
             message: "Brain found",
-            members: brain.members,
+            name: brain.name,
             ownerId: brain.ownerId,
-            name: brain.name
+            shareToken: brain.ownerId.toString() === user
+                ? brain.shareToken
+                : undefined
         });
     } catch (error) {
         console.error(error);
@@ -127,3 +144,43 @@ brainRouter.get("/:id", AuthMiddleware, async (req: Request, res: Response) => {
 })
 
 brainRouter.post("/:id/content", AuthMiddleware, addToBrainController)
+
+brainRouter.delete("/:id", AuthMiddleware, async (req: Request, res: Response) => {
+    const brainId = req.params.id;
+    const user = req.userId;
+
+    if (!user) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+    }
+
+    if (!brainId) {
+        res.status(400).json({ message: "Brain ID is required" });
+        return;
+    }
+
+    try {
+        const brain = await brainModel.findOneAndDelete({
+            _id: brainId,
+            ownerId: user
+        });
+
+        if (!brain) {
+            res.status(404).json({
+                message: "Brain not found or you are not the owner"
+            });
+            return;
+        }
+
+        res.status(200).json({
+            message: "Brain deleted successfully"
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Failed to delete brain"
+        });
+    }
+});

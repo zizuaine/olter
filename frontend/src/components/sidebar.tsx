@@ -11,8 +11,6 @@ import torrigate from "../assets/sidebar-logo/olter-torii.svg"
 import { useAuth } from "../context/authContext";
 import { motion } from "motion/react";
 import { Connections } from "./connections";
-import type { Chat } from "../pages/chat";
-import { h2 } from "motion/react-client";
 import { useChats } from "../context/chatContext";
 
 export const Sidebar = () => {
@@ -115,7 +113,14 @@ export const Sidebar = () => {
 
                     {chats.length > 0 && (
                         <>
-                            <h2 className="mt-4 pl-3 font-helvetica text-[#596579] text-[14px]">chats</h2>
+                            <div className="flex items-center mt-4 gap-2 pl-2">
+                                <MessageCircle
+                                    size={17}
+                                    strokeWidth={2}
+                                    className="relative z-10 text-[#596579]"
+                                />
+                                <h2 className="font-helvetica text-[#596579] text-[14px]">chats</h2>
+                            </div>
                             <div className="relative  flex-1 overflow-hidden">
 
                                 <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 
