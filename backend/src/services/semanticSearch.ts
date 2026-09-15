@@ -18,7 +18,8 @@ export const semanticSearch = async (
 
     if (result.matches.length === 0) {
         return {
-            context: "",
+            operation: "answer",
+            content: "I couldn't find anything related to your question in your saved knowledge.",
             sources: []
         }
     }
