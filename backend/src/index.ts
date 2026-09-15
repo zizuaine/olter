@@ -15,7 +15,8 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://olter-mrvg.vercel.app"
+        "https://olter-mrvg.vercel.app",
+        "https://olter-jr745t6-dikshants-projects-d3649360.vercel.app"
     ],
     credentials: true
 }));
