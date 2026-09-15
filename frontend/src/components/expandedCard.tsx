@@ -9,6 +9,7 @@ import {
     FileText,
     HardDrive,
 } from "lucide-react";
+import { API_URL } from "../config/api";
 
 type ExpandedCardProps = {
     content: Content;
@@ -26,7 +27,7 @@ const ExpandedCard = ({ content, onClose, onSave }: ExpandedCardProps) => {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-            `http://localhost:3000/api/v1/contents/${content._id}`,
+            `${API_URL}/api/v1/contents/${content._id}`,
             {
                 method: "PUT",
                 headers: {

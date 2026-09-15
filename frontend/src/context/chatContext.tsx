@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { API_URL } from "../config/api";
 
 type ChatDescription = {
     _id: string;
@@ -18,7 +19,7 @@ export const ChatContextProvider = ({ children }: { children: React.ReactNode })
     useEffect(() => {
         const fetchChats = async () => {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:3000/api/v1/chat", {
+            const res = await fetch(`${API_URL}/api/v1/chat`, {
                 headers: { authorization: `Bearer ${token}` }
             });
             if (!res.ok) return;

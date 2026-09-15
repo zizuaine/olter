@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import type { Content } from "../pages/files";
+import { API_URL } from "../config/api";
 
 type NewContentModalProps = {
     onClose: () => void;
@@ -32,7 +33,7 @@ const NewContentModal = ({
                 brainId
             };
 
-        const res = await fetch("http://localhost:3000/api/v1/contents", {
+        const res = await fetch(`${API_URL}/api/v1/contents`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

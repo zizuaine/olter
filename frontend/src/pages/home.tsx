@@ -4,6 +4,7 @@ import ChatBar from "../components/chatBar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useChats } from "../context/chatContext";
+import { API_URL } from "../config/api";
 
 export const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,7 @@ export const Home = () => {
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                "http://localhost:3000/api/v1/chat",
+                `${API_URL}/api/v1/chat`,
                 {
                     method: "POST",
                     headers: {

@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion"
 import { motion } from "framer-motion"
 import ExpandedCard from "../components/expandedCard"
 import filesBackground from "../assets/background/dashboard-background.png"
+import { API_URL } from "../config/api";
 
 export type Content = {
     _id: string,
@@ -46,7 +47,7 @@ export const Files = () => {
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                `http://localhost:3000/api/v1/contents?brainId=${brainId}`,
+                `${API_URL}/api/v1/contents?brainId=${brainId}`,
                 {
                     headers: {
                         authorization: `Bearer ${token}`
@@ -99,7 +100,7 @@ export const Files = () => {
 
     const handleCardClick = async (content: Content) => {
         const token = localStorage.getItem("token")
-        const res = await fetch(`http://localhost:3000/api/v1/contents/${content._id}`, {
+        const res = await fetch(`${API_URL}/api/v1/contents/${content._id}`, {
             headers: {
                 authorization: `Bearer ${token}`
             }

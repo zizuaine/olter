@@ -11,6 +11,7 @@ import SourceCard from "../components/sourceCard";
 import avatar from "../assets/sidebar-logo/avatar.png"
 import QuizCard from "../components/quizcard";
 import FlashcardsCard from "../components/flashcardsCard";
+import { API_URL } from "../config/api";
 
 
 export type Source = Content
@@ -87,7 +88,7 @@ const ChatPage = () => {
             const sendMessage = async () => {
                 setLoading(true)
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:3000/api/v1/chat/message/${chatId}`, {
+                const res = await fetch(`${API_URL}/api/v1/chat/message/${chatId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -118,7 +119,7 @@ const ChatPage = () => {
         if (location.state?.userMessage) return;
         const fetchCurrentChat = async () => {
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:3000/api/v1/chat/${chatId}`, {
+            const res = await fetch(`${API_URL}/api/v1/chat/${chatId}`, {
                 method: "GET",
                 headers: { authorization: `Bearer ${token}` }
             });
@@ -135,7 +136,7 @@ const ChatPage = () => {
         setLoading(true)
         const token = localStorage.getItem("token");
         const res = await fetch(
-            `http://localhost:3000/api/v1/chat/message/${chatId}`,
+            `${API_URL}/api/v1/chat/message/${chatId}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json", authorization: `Bearer ${token}` },

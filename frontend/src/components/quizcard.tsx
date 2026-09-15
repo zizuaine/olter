@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config/api";
 
 type Question = {
     questionNumber: number;
@@ -25,7 +26,7 @@ const QuizCard = ({ questions, quizId }: QuizCardProps) => {
         const token = localStorage.getItem("token");
         setChecking(true);
         const res = await fetch(
-            `http://localhost:3000/api/v1/quiz/${quizId}/answers/${current.questionNumber}`,
+            `${API_URL}/api/v1/quiz/${quizId}/answers/${current.questionNumber}`,
             { headers: { authorization: `Bearer ${token}` } }
         );
         const data = await res.json();

@@ -46,7 +46,7 @@ export const Connections = ({ isOpen, onToggle }: ConnectionsProps) => {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`http://localhost:3000/api/v1/brain/${id}`, {
+            const res = await fetch(`${API_URL}/api/v1/brain/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -131,11 +131,11 @@ export const Connections = ({ isOpen, onToggle }: ConnectionsProps) => {
                                             <div
                                                 onClick={(e) => e.stopPropagation()}
                                                 className="
-                          absolute right-0 top-full mt-1 w-32 bg-white
-                          border border-[#DDD5C6] rounded-xl
-                          shadow-[0px_4px_16px_rgba(0,0,0,0.10)] p-1 z-50
-                          text-[#3F4650]
-                        "
+                                                          absolute right-0 top-full mt-1 w-32 bg-white
+                                                          border border-[#DDD5C6] rounded-xl
+                                                          shadow-[0px_4px_16px_rgba(0,0,0,0.10)] p-1 z-50
+                                                          text-[#3F4650]
+                                                        "
                                             >
                                                 {brain.ownerId === user?._id ? (
                                                     <>
@@ -144,7 +144,7 @@ export const Connections = ({ isOpen, onToggle }: ConnectionsProps) => {
 
                                                             onClick={async () => {
                                                                 const token = localStorage.getItem("token");
-                                                                const res = await fetch(`http://localhost:3000/api/v1/brain/${brain._id}`, {
+                                                                const res = await fetch(`${API_URL}/api/v1/brain/${brain._id}`, {
                                                                     method: "GET",
                                                                     headers: { authorization: `Bearer ${token}` }
                                                                 })

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import authTorii from "../assets/auth/torigate-auth.png"
 import Button from "../components/button";
 import { useAuth } from "../context/authContext";
+import { API_URL } from "../config/api";
 
 export const Auth = () => {
     const [signupData, setSignupData] = useState({
@@ -44,7 +45,7 @@ export const Auth = () => {
         console.log(signupData)
 
         try {
-            const endPoint = "http://localhost:3000/api/v1/user/signup";
+            const endPoint = `${API_URL}/api/v1/user/signup`;
             const res = await fetch(endPoint, {
                 method: "POST",
                 headers: {
@@ -84,7 +85,7 @@ export const Auth = () => {
         console.log(loginData)
 
         try {
-            const endPoint = "http://localhost:3000/api/v1/user/signin";
+            const endPoint = `http://${API_URL}/api/v1/user/signin`;
             const res = await fetch(endPoint, {
                 method: "POST",
                 headers: {

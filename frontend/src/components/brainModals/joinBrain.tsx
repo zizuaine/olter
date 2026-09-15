@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Users, CheckCircle } from "lucide-react";
+import { API_URL } from "../../config/api";
 
 type Props = {
     onClose: () => void;
@@ -24,7 +25,7 @@ const JoinBrainModal = ({ onClose, onSuccess }: Props) => {
 
         const authToken = localStorage.getItem("token");
         const res = await fetch(
-            `http://localhost:3000/api/v1/brain/join/${cleanToken}`,
+            `${API_URL}/api/v1/brain/join/${cleanToken}`,
             {
                 method: "POST",
                 headers: { authorization: `Bearer ${authToken}` },

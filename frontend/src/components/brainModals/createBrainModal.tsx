@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Info, Check } from "lucide-react";
+import { API_URL } from "../../config/api";
 
 type Props = {
     onClose: () => void;
@@ -25,7 +26,7 @@ const CreateBrainModal = ({ onClose, onSuccess }: Props) => {
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                "http://localhost:3000/api/v1/brain",
+                `${API_URL}/api/v1/brain`,
                 {
                     method: "POST",
                     headers: {

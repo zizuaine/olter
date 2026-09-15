@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
+import { API_URL } from "../config/api";
 
 type userProfile = {
     _id: string,
@@ -22,7 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 const fetchUser = async (token: string): Promise<userProfile | null> => {
     try {
-        const res = await fetch("http://localhost:3000/api/v1/user/me", {
+        const res = await fetch(`${API_URL}:3000/api/v1/user/me`, {
             method: "Get",
             headers: {
                 authorization: `Bearer ${token}`

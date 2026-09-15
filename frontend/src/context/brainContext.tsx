@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useAuth } from "./authContext";
+import { API_URL } from "../config/api";
 
 export type Brain = {
     _id: string;
@@ -36,7 +37,7 @@ export const BrainContextProvider = ({
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:3000/api/v1/brain",
+                `${API_URL}/api/v1/brain`,
                 {
                     headers: {
                         authorization: `Bearer ${token}`
