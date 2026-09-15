@@ -1,4 +1,5 @@
 import { genResponse } from "../../llm/genResponse.js";
+import type { contentModel } from "../../models/contents.js";
 import { quizModel } from "../../models/quiz.js";
 import { detectQuizIntent } from "../detectquizIntent.js";
 
@@ -43,12 +44,12 @@ export const handleQuizResponse = async (query: string, chat: any) => {
             }
 
             const LLMresponse = await genResponse(query, quizContext, chat.messages);
-            chat.messages.push({ role: "assistant", content: LLMresponse.answer });
+            chat.messages.push({ role: "assistant", content: LLMresponse.content });
             await chat.save();
 
             return {
                 message: "received response successfully",
-                answer: LLMresponse.answer,
+                content: LLMresponse.content,
                 sources: [],
                 chatId: chat._id.toString(),
                 operation: "quiz"
