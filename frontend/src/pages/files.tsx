@@ -1,4 +1,4 @@
-import { UserIcon, ChevronDown, Plus, Rss } from "lucide-react"
+import { UserIcon, ChevronDown, Plus } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { useBrain } from "../context/brainContext"
 import Button from "../components/button"

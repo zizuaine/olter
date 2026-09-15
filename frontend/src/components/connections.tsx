@@ -16,6 +16,7 @@ import CreateBrainModal from "./brainModals/createBrainModal";
 import JoinBrainModal from "./brainModals/joinBrain";
 import ShareBrainModal from "./brainModals/shareBrain";
 import type { Brain } from "../context/brainContext";
+import { API_URL } from "../config/api";
 
 type ConnectionsProps = {
     isOpen: boolean;

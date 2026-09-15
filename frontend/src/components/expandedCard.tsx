@@ -6,8 +6,6 @@ import {
     User,
     CalendarDays,
     Clock3,
-    FileText,
-    HardDrive,
 } from "lucide-react";
 import { API_URL } from "../config/api";
 
