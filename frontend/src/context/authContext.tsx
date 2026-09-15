@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 const fetchUser = async (token: string): Promise<userProfile | null> => {
     try {
-        const res = await fetch(`${API_URL}:3000/api/v1/user/me`, {
+        const res = await fetch(`${API_URL}/api/v1/user/me`, {
             method: "Get",
             headers: {
                 authorization: `Bearer ${token}`
