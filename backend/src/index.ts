@@ -13,11 +13,18 @@ import cors from "cors";
 const app = express();
 
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://olter-mrvg.vercel.app",
-        "https://olter-jr745t6-dikshants-projects-d3649360.vercel.app"
-    ],
+    origin: (origin, callback) => {
+        const allowed = [
+            "http://localhost:5173",
+            "https://olter-mrvg.vercel.app",
+        ];
+
+        if (!origin || allowed.includes(origin) || origin.endsWith(".vercel.app")) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true
 }));
 
