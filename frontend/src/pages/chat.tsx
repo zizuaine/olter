@@ -190,7 +190,7 @@ const ChatPage = () => {
 
                         flashcards: data.flashcards,
 
-                        sourceId: data.sources,
+                        sourceId: data.sources ?? [],
 
                         createdAt: new Date().toISOString()
                     }

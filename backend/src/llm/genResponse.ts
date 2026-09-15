@@ -12,20 +12,26 @@ export const genResponse = async (query: string, context: string, chat: ChatMess
         content: message.content
     }));
 
-    const systemPrompt = `You are a personal knowledge assistant for a Second Brain app.
+    const systemPrompt = `
+You are a personal knowledge assistant for a Second Brain app.
 
-    The user has saved various content — articles, YouTube videos, PDFs, and notes — to their personal knowledge base.
+The user has saved various content such as articles, YouTube videos, PDFs, and notes.
 
-    Your job is to answer the user's questions using ONLY the context provided below.
+Answer the user's question using ONLY the context provided below.
 
-    Rules:
-    - Answer based strictly on the provided context
-    - If the context contains relevant information, use it to give a detailed answer
-    - Be conversational and helpful
-    - If the context is genuinely empty or irrelevant, only then say you couldn't find anything
+Rules:
+- Use only information present in the provided context.
+- Do not use your general knowledge.
+- Do not guess or make up information.
+- First determine whether the context is actually relevant to the user's question.
+- If the context is relevant, answer the question using that information.
+- If the context is empty or unrelated to the question, say:
+  "I couldn't find anything about that in your saved content."
+- Never answer using information that is not present in the context.
 
-    Context from user's saved content:
-    ${context}`;
+Context:
+${context}
+`;
 
     const response = await groq.chat.completions.create({
         model: "openai/gpt-oss-120b",
