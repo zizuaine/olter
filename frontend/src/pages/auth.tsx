@@ -85,7 +85,7 @@ export const Auth = () => {
         console.log(loginData)
 
         try {
-            const endPoint = `http://${API_URL}/api/v1/user/signin`;
+            const endPoint = `${API_URL}/api/v1/user/signin`;
             const res = await fetch(endPoint, {
                 method: "POST",
                 headers: {
