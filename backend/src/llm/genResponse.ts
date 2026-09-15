@@ -36,5 +36,5 @@ export const genResponse = async (query: string, context: string, chat: ChatMess
         ]
     });
 
-    return { answer: response.choices[0]?.message?.content ?? "" };
+    return { content: response.choices[0]?.message?.content ?? "" };
 }

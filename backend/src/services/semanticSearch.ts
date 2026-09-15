@@ -16,11 +16,15 @@ export const semanticSearch = async (
         includeMetadata: true
     });
 
+    console.log(
+        result.matches.map(match => match.score)
+    );
+
+
     if (result.matches.length === 0) {
         return {
             operation: "answer",
             content: "I couldn't find anything related to your question in your saved knowledge.",
-            sources: []
         }
     }
 

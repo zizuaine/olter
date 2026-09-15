@@ -2,13 +2,13 @@ import { genResponse } from "../llm/genResponse.js";
 
 export const handleRagResponse = async (query: string, user: string, context: string, contentIds: string[], chat: any) => {
 
-    const { answer } = await genResponse(query, context, chat.messages)
+    const { content } = await genResponse(query, context, chat.messages)
 
 
     chat.messages.push({
         role: "assistant",
         operation: "answer",
-        content: answer,
+        content: content,
         sourceId: contentIds
     });
     await chat.save();
@@ -16,7 +16,7 @@ export const handleRagResponse = async (query: string, user: string, context: st
     return {
         message: "received response successfully",
         operation: "answer",
-        answer,
+        content,
         chatId: chat._id
     };
 }
