@@ -8,6 +8,8 @@ import { contentsRouter } from "./routes/contents.route.js";
 import { chatRouter } from "./routes/chat.route.js";
 import { brainRouter } from "./routes/brain.routes.js";
 import { quizRouter } from "./routes/quiz.routes.js";
+import uploadRouter from "./routes/fileUpload.route.js"
+
 import cors from "cors";
 
 const app = express();
@@ -35,6 +37,8 @@ app.use("/api/v1/chat", chatRouter);
 app.use("/api/v1/brain", brainRouter);
 app.use("/api/v1/quiz", quizRouter);
 
+app.use(express.urlencoded({ extended: false }))
+app.use('/file', uploadRouter)
 
 
 const PORT = Number(process.env.PORT) || 3000;

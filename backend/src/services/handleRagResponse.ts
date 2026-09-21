@@ -1,22 +1,31 @@
 import { genResponse } from "../llm/genResponse.js";
 
-export const handleRagResponse = async (query: string, user: string, context: string, contentIds: string[], chat: any) => {
+type RagResponse = {
+    message: string;
+    operation: "answer";
+    content: string;
+    found: boolean;
+    chatId: string;
+};
 
-    const { content } = await genResponse(query, context, chat.messages)
+export const handleRagResponse = async (query: string, user: string, context: string, contentIds: string[], chat: any): Promise<RagResponse> => {
+
+    const ragResponse = await genResponse(query, context, chat.messages)
 
 
     chat.messages.push({
         role: "assistant",
         operation: "answer",
-        content: content,
-        sourceId: contentIds
+        content: ragResponse.answer,
+        sourceId: ragResponse.found ? contentIds : []
     });
     await chat.save();
 
     return {
         message: "received response successfully",
         operation: "answer",
-        content,
-        chatId: chat._id
+        content: ragResponse.answer,
+        found: ragResponse.found,
+        chatId: chat._id.toString(),
     };
 }

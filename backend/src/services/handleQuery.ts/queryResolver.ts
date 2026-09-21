@@ -18,16 +18,18 @@ const queryIntentConfig = {
 
 export const queryResolver = async (query: string, chat: HydratedDocument<Chat>) => {
     const context = `
-Active content exists: ${chat.activeChunksIds.length > 0}
+            Active content exists: ${chat.activeChunksIds.length > 0}
 
-User request:
-${query}
-`;
-
+            User request:
+            ${query}
+            `;
+    console.log(chat.activeChunksIds.length > 0)
     const intentResult = await genStructuredOutput<QueryIntent>(
         queryIntentConfig,
         context
     );
+
+
 
     if (intentResult.operation === "flashcard"
         || intentResult.operation === "quiz"

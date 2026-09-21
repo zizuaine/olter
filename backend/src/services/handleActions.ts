@@ -10,7 +10,7 @@ import type { Content } from "../models/contents.js";
 import { chatModel } from "../models/chat.js";
 
 
-type QuizResult = {
+export type QuizResult = {
     questions: {
         questionNumber: number;
         question: string;
@@ -24,7 +24,7 @@ export type SummaryResult = {
     summary: string;
 };
 
-type FlashcardResult = {
+export type FlashcardResult = {
     flashcards: {
         question: string;
         answer: string;
@@ -37,6 +37,21 @@ type OperationMap = {
     summary: SummaryResult
 }
 
+export type ActionResponse =
+    | {
+        operation: "summary";
+        content: string;
+    }
+    | {
+        operation: "flashcard";
+        flashcards: FlashcardResult["flashcards"];
+    }
+    | {
+        operation: "quiz";
+        quizId: string;
+        questions: QuizResult["questions"];
+    };
+
 type Operation = "flashcard" | "quiz" | "summary";
 
 export const handleActionResponse = async (
@@ -45,7 +60,7 @@ export const handleActionResponse = async (
     contentIds: string[],
     user: string,
     chatId: string
-) => {
+): Promise<ActionResponse> => {
 
     if (!content) {
         throw new Error("Content text is missing");
@@ -99,7 +114,7 @@ export const handleActionResponse = async (
         await chat.save();
         return {
             operation: "quiz",
-            quizId: quiz._id,
+            quizId: quiz._id.toString(),
             questions: quiz.questions
         };
     }

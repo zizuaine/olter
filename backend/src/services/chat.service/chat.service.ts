@@ -40,11 +40,15 @@ export const sendQueryService = async (
 
     const { intent, resolvedContent } = await handleQuery(query, user, chat);
 
-    if (intent.operation === "none" || intent.target === "none") {
+    if (intent.operation === "none" || intent.target === "none" || !resolvedContent) {
+        const noResultsMessage = !resolvedContent
+            ? "I couldn't find anything related to that in your saved content."
+            : nonContentAnswer;
+
         chat.messages.push({
             role: "assistant",
             operation: "none",
-            content: nonContentAnswer,
+            content: noResultsMessage,
             sourceId: []
         });
         await chat.save();
@@ -52,17 +56,12 @@ export const sendQueryService = async (
         return {
             status: 200,
             body: {
-                message: "received response successfully",
                 operation: "none",
-                content: nonContentAnswer,
+                content: noResultsMessage,
                 sources: [],
-                chatId: chat._id.toString(),
-            },
+                chatId: chat._id.toString()
+            }
         };
-    }
-
-    if (!resolvedContent) {
-        throw new Error("no content returned by contentResolver")
     }
 
     const ragResponse = await executeOperation(
@@ -73,12 +72,17 @@ export const sendQueryService = async (
         user
     );
 
+    const sources = ragResponse.operation === "answer" && !ragResponse.found
+        ? []
+        : resolvedContent.sources ?? [];
+
+
     return {
         status: 200,
         body: {
             ...ragResponse,
             chatId: chat._id.toString(),
-            sources: resolvedContent.sources,
+            sources,
             operation: intent.operation
         },
     };

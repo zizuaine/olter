@@ -26,6 +26,7 @@ export const processContent = async (
     link?: string,
     title?: string,
     note?: string,
+    PDF?: Express.Multer.File,
 ) => {
 
     if (note) {
@@ -56,27 +57,36 @@ export const processContent = async (
         }
     }
 
-    if (!link) {
-        throw new Error("Link is required.")
+    if (!link && !PDF) {
+        throw new Error("Link or PDF is required.");
     }
 
-    const type = detectType(link);
-
+    let type: "link" | "pdf" | "youtube"
     let extracted: ExtractedContent;
-    if (type === "youtube") {
-        extracted = await parseYoutube(link);
-    } else if (type === "pdf") {
-        extracted = await parsePDF(link);
-    } else {
 
-        extracted = await parseWebsites(link);
+    if (PDF) {
+        type = "pdf";
+        extracted = await parsePDF(PDF);
+    }
+    else {
+        if (!link) throw new Error("link not provided")
+        type = detectType(link);
+
+        if (type === "youtube") {
+            extracted = await parseYoutube(link);
+        } else if (type === "pdf") {
+            extracted = await parsePDF(link);
+        } else {
+
+            extracted = await parseWebsites(link);
+        }
     }
 
     const metadata = await generateMetadata(extracted.content);
 
     try {
         const content = await contentModel.create({
-            link,
+            link: link ?? "",
             title: metadata.title,
             type: type,
             userId: user,

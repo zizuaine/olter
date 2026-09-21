@@ -2,16 +2,25 @@ import type { QueryIntent } from "./queryResolver.js";
 import { chatModel, type Chat } from "../../models/chat.js";
 import type { HydratedDocument } from "mongoose";
 import { semanticSearch } from "../semanticSearch.js";
-import { contentModel } from "../../models/contents.js";
+import { contentModel, type Content } from "../../models/contents.js";
 import { pineconeIndex } from "../../config/pinecone.js";
+
+type ResolvedContent = {
+    context?: string;
+    batches?: string[][];
+    contentIds: string[];
+    sources?: Content[];
+    content?: string;
+};
 
 export const contentResolver = async (
     intent: QueryIntent,
     chat: HydratedDocument<Chat>,
     query: string,
     user: string,
-) => {
-    const userQuery = intent.contentQuery ? intent.contentQuery : query;
+): Promise<ResolvedContent | null> => {
+
+    const userQuery = query;
 
     if (intent.target === "active") {
         if (intent.scope === "relevant") {
@@ -81,11 +90,8 @@ export const contentResolver = async (
             brainId
         );
 
-        if (sources.length === 0) {
-            throw new Error("no sources found");
-        }
-        if (!matches) {
-            throw new Error("no macthes found");
+        if (!sources || sources.length === 0) {
+            return null;
         }
 
         const contentIds = sources.map(s => s._id.toString());
@@ -97,7 +103,7 @@ export const contentResolver = async (
         return {
             context,
             contentIds,
-            sources
+            sources,
         };
     };
 
@@ -107,32 +113,30 @@ export const contentResolver = async (
             user,
             brainId
         );
+
+        if (!sources || sources.length === 0) {
+            return null;
+        }
         const source = sources[0];
+        if (source) {
+            const relevantChunks = matches
+                .filter(match => match.metadata?.mongoId === source?._id.toString())
+                .map(match => match.metadata?.text)
+                .filter((text): text is string => Boolean(text))
+                .join("\n\n");
 
-        if (!source) {
-            throw new Error("no source found");
+            const contentIds = [source?._id.toString()];
+
+            chat.activeContentIds = [source._id];
+            chat.activeChunksIds = matches.map(match => match.id);
+            await chat.save();
+
+            return {
+                context: relevantChunks,
+                contentIds,
+                sources: [source]
+            };
         }
-        if (!matches) {
-            throw new Error("Content is empty");
-        }
-
-        const relevantChunks = matches
-            .filter(match => match.metadata?.mongoId === source._id.toString())
-            .map(match => match.metadata?.text)
-            .filter((text): text is string => Boolean(text))
-            .join("\n\n");
-
-        const contentIds = [source._id.toString()];
-
-        chat.activeContentIds = [source._id];
-        chat.activeChunksIds = matches.map(match => match.id);
-        await chat.save();
-
-        return {
-            context: relevantChunks,
-            contentIds,
-            sources: [source]
-        };
     }
 
     if (intent.target === "none") {

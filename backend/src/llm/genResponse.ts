@@ -1,13 +1,19 @@
 import { groq } from "../config/groq.js";
+import { genResponseSchema } from "./schemas/genResponseSchema.js";
 
 type ChatMessage = {
     role: "user" | "assistant",
     content: string
 }
 
-export const genResponse = async (query: string, context: string, chat: ChatMessage[]) => {
+type RagResponse = {
+    answer: string;
+    found: boolean;
+};
 
-    const history = chat.map(message => ({
+export const genResponse = async (query: string, context: string, chat: ChatMessage[]): Promise<RagResponse> => {
+
+    const history = chat.slice(-10).map(message => ({
         role: message.role,
         content: message.content
     }));
@@ -39,8 +45,22 @@ ${context}
             { role: "system", content: systemPrompt },
             ...history,
             { role: "user", content: query }
-        ]
+        ],
+        response_format: {
+            type: "json_schema",
+            json_schema: {
+                name: "response",
+                schema: genResponseSchema,
+                strict: true
+            }
+        }
     });
 
-    return { content: response.choices[0]?.message?.content ?? "" };
+    const text = response.choices[0]?.message?.content;
+
+    if (!text) {
+        throw new Error("No response generated");
+    }
+    console.log(text)
+    return JSON.parse(text) as RagResponse;
 }
