@@ -7,7 +7,7 @@ type ChatMessage = {
 }
 
 type RagResponse = {
-    answer: string;
+    content: string;
     found: boolean;
 };
 
