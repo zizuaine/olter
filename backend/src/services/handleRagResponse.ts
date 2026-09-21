@@ -16,7 +16,7 @@ export const handleRagResponse = async (query: string, user: string, context: st
     chat.messages.push({
         role: "assistant",
         operation: "answer",
-        content: ragResponse.answer,
+        content: ragResponse.content,
         sourceId: ragResponse.found ? contentIds : []
     });
     await chat.save();
@@ -24,7 +24,7 @@ export const handleRagResponse = async (query: string, user: string, context: st
     return {
         message: "received response successfully",
         operation: "answer",
-        content: ragResponse.answer,
+        content: ragResponse.content,
         found: ragResponse.found,
         chatId: chat._id.toString(),
     };
