@@ -7,30 +7,24 @@ import {
 } from "../services/chat.service/chat.service.js";
 import { brainModel } from "../models/brain.js";
 import { chatModel } from "../models/chat.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const createChat = async (req: Request, res: Response) => {
     const user = req.userId;
     const { query, brainId } = req.body;
 
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new ApiError(401, "UNAUTHORIZED", "Unauthorized");
     };
 
-    try {
-        const chat = await chatModel.create({
-            userId: user,
-            title: query.slice(0, 50),
-            brainId: brainId ?? null
-        })
-        return res.status(201).json({
-            chatId: chat._id.toString()
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Failed to get a response"
-        })
-    }
+    const chat = await chatModel.create({
+        userId: user,
+        title: query.slice(0, 50),
+        brainId: brainId ?? null
+    })
+    return res.status(201).json({
+        chatId: chat._id.toString()
+    });
 }
 
 export const sendQuery = async (req: Request, res: Response) => {
@@ -39,26 +33,14 @@ export const sendQuery = async (req: Request, res: Response) => {
     const { query } = req.body;
 
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new ApiError(401, "UNAUTHORIZED", "Unauthorized");
     }
 
     if (!chatId) {
-        return res.status(400).json({
-            message: "Chat ID is required"
-        });
+        throw new ApiError(400, "CHAT_ID_REQUIRED", "Chat ID is required");
     }
-    try {
-
-        const result = await sendQueryService(query, chatId.toString(), user);
-
-        return res.status(result.status).json(result.body);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Failed to get a response"
-        })
-    }
+    const result = await sendQueryService(query, chatId.toString(), user);
+    return res.status(result.status).json(result.body);
 }
 
 export const getExistingChat = async (req: Request, res: Response) => {
@@ -66,77 +48,52 @@ export const getExistingChat = async (req: Request, res: Response) => {
     const chatId = req.params.id;
 
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new ApiError(401, "UNAUTHORIZED", "Unauthorized");
     }
     if (typeof chatId !== "string") {
-        return res.status(400).json({ message: "Invalid chat id" });
+        throw new ApiError(400, "INVALID_CHAT_ID", "Invalid chat id");
     }
 
-    try {
-        const chat = await getExistingChatService(chatId, user);
-        if (!chat) {
-            return res.status(404).json({
-                message: "Chat not found"
-            });
-        };
+    const chat = await getExistingChatService(chatId, user);
+    if (!chat) {
+        throw new ApiError(404, "CHAT_NOT_FOUND", "Chat not found");
+    };
 
-        res.status(200).json({
-            message: "received chat successfully",
-            chat,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "System Error"
-        })
-    }
+    res.status(200).json({
+        message: "received chat successfully",
+        chat,
+    });
 }
 
 export const getAllChats = async (req: Request, res: Response) => {
     const user = req.userId
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new ApiError(401, "UNAUTHORIZED", "Unauthorized");
     }
 
-    try {
-        const chats = await getAllChatsService(user);
-        res.status(200).json({
-            message: "received chats successfully",
-            chats
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Failed to fetch chats"
-        })
-    }
+    const chats = await getAllChatsService(user);
+    res.status(200).json({
+        message: "received chats successfully",
+        chats
+    });
 }
 
 export const deleteChat = async (req: Request, res: Response) => {
     const user = req.userId;
     const chatId = req.params.id;
     if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new ApiError(401, "UNAUTHORIZED", "Unauthorized");
     };
     if (typeof chatId !== "string") {
-        return res.status(400).json({ message: "Invalid chat id" });
+        throw new ApiError(400, "INVALID_CHAT_ID", "Invalid chat id");
     }
 
-    try {
-        const chat = await deleteChatService(chatId, user);
-        if (!chat) {
-            return res.status(404).json({
-                message: "Chat not found"
-            });
-        };
+    const chat = await deleteChatService(chatId, user);
+    if (!chat) {
+        throw new ApiError(404, "CHAT_NOT_FOUND", "Chat not found");
+    };
 
-        res.status(200).json({
-            message: "Chat deleted successfully",
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Server Error"
-        })
-    }
+    res.status(200).json({
+        message: "Chat deleted successfully",
+    });
 }

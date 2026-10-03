@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -11,6 +11,10 @@ import { quizRouter } from "./routes/quiz.routes.js";
 import uploadRouter from "./routes/fileUpload.route.js"
 
 import cors from "cors";
+import { ApiError } from "./utils/ApiError.js";
+import helmet from "helmet";
+import { errorHandler } from "./services/errorHandler.js";
+
 
 const app = express();
 
@@ -30,6 +34,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(helmet());
 app.use(express.json());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/contents", contentsRouter);
@@ -39,6 +44,8 @@ app.use("/api/v1/quiz", quizRouter);
 
 app.use(express.urlencoded({ extended: false }))
 app.use('/file', uploadRouter)
+
+app.use(errorHandler)
 
 
 const PORT = Number(process.env.PORT) || 3000;
