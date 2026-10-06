@@ -14,6 +14,7 @@ import cors from "cors";
 import { ApiError } from "./utils/ApiError.js";
 import helmet from "helmet";
 import { errorHandler } from "./services/errorHandler.js";
+import rateLimit from "express-rate-limit";
 
 
 const app = express();
@@ -25,7 +26,7 @@ app.use(cors({
             "https://olter-mrvg.vercel.app",
         ];
 
-        if (!origin || allowed.includes(origin) || origin.endsWith(".vercel.app")) {
+        if (!origin || allowed.includes(origin) || /^https:\/\/olter(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)) {
             callback(null, true);
         } else {
             callback(new Error("Not allowed by CORS"));
@@ -36,13 +37,22 @@ app.use(cors({
 
 app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
+
+const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 30,
+    message: { message: "Too many requests, slow down." }
+});
+
+
+app.use("/api/v1", limiter)
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/contents", contentsRouter);
 app.use("/api/v1/chat", chatRouter);
 app.use("/api/v1/brain", brainRouter);
 app.use("/api/v1/quiz", quizRouter);
 
-app.use(express.urlencoded({ extended: false }))
 app.use('/file', uploadRouter)
 
 app.use(errorHandler)

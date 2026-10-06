@@ -1,10 +1,7 @@
 import { generateEmbeddings } from "../llm/embeddings.js";
 import { pineconeIndex } from "../config/pinecone.js";
 import { contentModel } from "../models/contents.js";
-
-const sleep = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
+import { geminiBucket } from "../rate-limiting/tokenBucket.js";
 
 export const saveEmbeddings = async (
     chunks: string[],
@@ -13,6 +10,11 @@ export const saveEmbeddings = async (
     type: string,
     brainId: string | null
 ) => {
+    const generateRateLimitedEmbedding = async (chunk: string): Promise<number[]> => {
+        await geminiBucket.consume();
+        return generateEmbeddings(chunk);
+    }
+
     const batchSize: number = 5;
     const embeddings: number[][] = []
     for (let i = 0; i < chunks.length; i += batchSize) {
@@ -20,18 +22,14 @@ export const saveEmbeddings = async (
         const batch = chunks.slice(i, i + batchSize);
 
         const embed = await Promise.all(
-            batch.map(chunk => generateEmbeddings(chunk))
+            batch.map(chunk => generateRateLimitedEmbedding(chunk))
         );
         console.log("Embeddings generated");
-        embeddings.push(...embed)
-
-        if (i + batchSize < chunks.length) {
-            await sleep(5000);
-        }
+        embeddings.push(...embed);
     }
 
     const chunkIds = chunks.map(
-        (_, i) => `${mongoId}_chunk_${i}`
+        (c, i) => `${mongoId}_chunk_${i}`
     );
     await contentModel.findByIdAndUpdate(
         mongoId,

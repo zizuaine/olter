@@ -1,5 +1,6 @@
 import { groq } from "../config/groq.js";
 import { genResponseSchema } from "./schemas/genResponseSchema.js";
+import { groqRateLimiter } from "../rate-limiting/tokenBucket.js";
 
 type ChatMessage = {
     role: "user" | "assistant",
@@ -13,6 +14,7 @@ type RagResponse = {
 
 export const genResponse = async (query: string, context: string, chat: ChatMessage[]): Promise<RagResponse> => {
 
+    await groqRateLimiter.consume();
     const history = chat.slice(-10).map(message => ({
         role: message.role,
         content: message.content
