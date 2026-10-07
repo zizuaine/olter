@@ -1,4 +1,5 @@
 import { PDFParse } from "pdf-parse";
+import { UrlValidator } from "../security/validateUrl.js";
 
 import type { ExtractedContent } from "../types/extracted-content.js";
 
@@ -9,6 +10,7 @@ export const parsePDF = async (
     let parser: PDFParse;
 
     if (typeof source === "string") {
+        const { url } = await UrlValidator(source);
 
         parser = new PDFParse({
             url: source
