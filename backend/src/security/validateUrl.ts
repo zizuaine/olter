@@ -5,6 +5,7 @@ import net from "net";
 type ValidateUrl = {
     url: string;
     safeIp: string;
+    family: 4 | 6;
 }
 
 const isBlockedIp = (ip: string): boolean => {
@@ -93,8 +94,14 @@ export const UrlValidator = async (string: string): Promise<ValidateUrl> => {
         safeIp = firstAddress.address;
     }
 
+    const family = net.isIP(safeIp);
+    if (family !== 4 && family !== 6) {
+        throw new ApiError(400, "INVALID_IP", "Failed to resolve a valid IPv4 or IPv6 address");
+    }
+
     return {
         url: url.toString(),
-        safeIp
+        safeIp,
+        family
     }
 }

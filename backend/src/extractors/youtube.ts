@@ -6,39 +6,28 @@ import { UrlValidator } from "../security/validateUrl.js";
 import { ApiError } from "../utils/ApiError.js";
 
 export const parseYoutube = async (link: string): Promise<ExtractedContent> => {
-    const { url: safeUrl, safeIp } = await UrlValidator(link);
-    const url = new URL(safeUrl);
+    let url: URL;
+    try {
+        url = new URL(link);
+    } catch {
+        throw new ApiError(400, "INVALID_URL", "Invalid URL");
+    }
     const hostname = url.hostname.replace(/^www\./, "");
 
-    if (
-        hostname !== "youtube.com" &&
-        hostname !== "youtu.be"
-    ) {
-        throw new ApiError(
-            400,
-            "INVALID_URL",
-            "Invalid YouTube URL"
-        );
+    if (hostname !== "youtube.com" && hostname !== "youtu.be") {
+        throw new ApiError(400, "INVALID_URL", "Invalid YouTube URL");
     }
 
     let id: string;
     if (hostname === "youtube.com") {
-        id = url.searchParams.get("v") ?? " ";
+        id = url.searchParams.get("v") ?? "";
         if (!id) {
-            throw new ApiError(
-                400,
-                "INVALID_URL",
-                "YouTube video ID not found"
-            );
+            throw new ApiError(400, "INVALID_URL", "YouTube video ID not found");
         }
     } else if (hostname === "youtu.be") {
         id = url.pathname.slice(1);
         if (!id) {
-            throw new ApiError(
-                400,
-                "INVALID_URL",
-                "YouTube video ID not found"
-            );
+            throw new ApiError(400, "INVALID_URL", "YouTube video ID not found");
         }
     } else {
         throw new Error("Invalid YouTube URL");
@@ -61,8 +50,13 @@ const extract = async (id: string, safeUrl: string): Promise<ExtractedContent> =
 
     const title = response.data.title;
 
-    const transcript_obj = await YoutubeTranscript.fetchTranscript(id);
-    const transcript = transcript_obj.map(obj => obj.text).join(" ");
+    let transcriptObj;
+    try {
+        transcriptObj = await YoutubeTranscript.fetchTranscript(id);
+    } catch {
+        throw new ApiError(422, "TRANSCRIPT_NOT_FOUND", "No subtitles or captions available for this video");
+    }
+    const transcript = transcriptObj.map(obj => obj.text).join(" ");
     if (!transcript) {
         throw new ApiError(
             422,
